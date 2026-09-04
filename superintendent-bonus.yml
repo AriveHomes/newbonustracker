@@ -1,0 +1,139 @@
+name: Superintendent bonus review
+description: Create a shared, trackable review for one home or lot.
+title: "[Bonus Review] "
+labels:
+  - superintendent-bonus
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use the Arive Bonus Tracker first, then paste the summary below. Attach the downloaded report before approval. Final-grade photos remain in Dropbox.
+
+  - type: dropdown
+    id: superintendent
+    attributes:
+      label: Superintendent
+      options:
+        - Greg Worthington
+        - Jackson Chambers
+        - Burke Nielson
+        - Deryck Copley
+    validations:
+      required: true
+
+  - type: input
+    id: community-lot
+    attributes:
+      label: Community and lot
+      placeholder: Community / Lot 142
+    validations:
+      required: true
+
+  - type: input
+    id: address
+    attributes:
+      label: Property address
+      placeholder: Street address, city, state, ZIP
+    validations:
+      required: true
+
+  - type: textarea
+    id: build-time
+    attributes:
+      label: Build-time summary
+      description: Include build start, actual close, gross days, approved delay days, adjusted days, and variance to the applicable build-time limit (150 days single-family / 205 days townhome).
+      placeholder: |
+        Build start:
+        Actual close:
+        Gross build days:
+        Approved delay days:
+        Adjusted build days:
+        Applicable build-time requirement (150 SF / 205 TH): Complete / Not complete
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: criteria
+    attributes:
+      label: Bonus requirements
+      options:
+        - label: Adjusted build time is within the applicable limit: 150 calendar days for single-family homes or 205 calendar days for townhomes.
+          required: true
+        - label: Required final-grade photos are uploaded to Dropbox and verified in the tracker.
+          required: true
+        - label: All 30-day punch list items are complete.
+          required: true
+        - label: Required safety and SWPPP inspections are complete.
+          required: true
+        - label: The End of Build Checklist is complete.
+          required: true
+
+  - type: textarea
+    id: delays
+    attributes:
+      label: Delay exception log
+      description: List each exception, date range, approval decision, approver, and supporting note.
+      placeholder: No delays logged, or paste the delay table from the tracker.
+
+  - type: textarea
+    id: final-grade
+    attributes:
+      label: Final-grade photo verification
+      description: Confirm the photos are in Dropbox and note the verification date or folder reference.
+      placeholder: |
+        Uploaded to Dropbox: Yes / No
+        Verified date:
+        Dropbox folder or note:
+    validations:
+      required: true
+
+  - type: textarea
+    id: safety-swppp
+    attributes:
+      label: Safety / SWPPP inspection verification
+      placeholder: |
+        Complete: Yes / No
+        Verified date:
+        Inspection reference or notes:
+    validations:
+      required: true
+
+  - type: textarea
+    id: superintendent-checklist
+    attributes:
+      label: End of Build Checklist verification
+      description: The checklist file can be linked or attached after it is provided.
+      placeholder: |
+        Complete: Yes / No
+        Completion date:
+        Checklist reference or notes:
+    validations:
+      required: true
+
+  - type: input
+    id: bonus
+    attributes:
+      label: Recommended or approved bonus
+      placeholder: $1,500
+    validations:
+      required: true
+
+  - type: textarea
+    id: approval
+    attributes:
+      label: Review and approval trail
+      placeholder: |
+        Reviewed by / date:
+        Approved by / date:
+        Paid date:
+        Approval notes:
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Approval checks
+      options:
+        - label: All pending delay exceptions have been decided.
+          required: true
+        - label: The calculated bonus was reviewed by management.
+          required: true

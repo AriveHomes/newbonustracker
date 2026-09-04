@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#24272a">
+  <meta name="description" content="Arive Homes Superintendent Bonus Program tracker for fair, documented, and shareable bonus reviews.">
+  <title>Arive Homes | Superintendent Bonus Program</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css?v=12">
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to content</a>
+
+  <header class="app-header">
+    <div class="header-inner">
+      <button class="brand-button" id="brandHomeButton" type="button" aria-label="Go to bonus tracker">
+        <img src="assets/arive-logo.png" alt="Arive Homes" class="brand-logo" onerror="this.onerror=null;this.src='data:image/png;base64,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'">
+        <span class="brand-divider" aria-hidden="true"></span>
+        <span class="brand-program">Superintendent Bonus Program</span>
+      </button>
+
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <button type="button" class="nav-button is-active" data-view="tracker" aria-current="page">Tracker</button>
+        <button type="button" class="nav-button" data-view="editor">Bonus Review</button>
+        <button type="button" class="nav-button" data-view="settings">Program Settings</button>
+        <a class="nav-button nav-link-button" href="monthly-summary.html" id="monthlySummaryNav">Monthly Summary</a>
+      </nav>
+
+      <div class="header-actions">
+        <span class="save-indicator" id="saveIndicator" aria-live="polite">Saved locally</span>
+        <button type="button" class="button button-primary button-compact" id="headerNewReviewButton">New Review</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="mainContent" class="app-shell">
+    <section id="trackerView" class="view is-active" aria-labelledby="trackerTitle">
+      <div class="page-heading page-heading-split">
+        <div>
+          <p class="eyebrow">Arive Homes construction operations</p>
+          <h1 id="trackerTitle">Superintendent Bonus Tracker</h1>
+          <p class="page-description">Track each closing, document approved delays, verify all five bonus requirements, and calculate a consistent bonus recommendation.</p>
+        </div>
+        <div class="page-heading-actions">
+          <a class="button button-secondary" href="monthly-summary.html">Monthly owner summary</a>
+          <button type="button" class="button button-secondary" id="importAllButton">Import backup</button>
+          <button type="button" class="button button-secondary" id="exportAllButton">Export backup</button>
+          <button type="button" class="button button-primary" id="newReviewButton">New bonus review</button>
+        </div>
+      </div>
+
+      <div class="metric-grid" aria-label="Program summary">
+        <article class="metric-card">
+          <span class="metric-label">Open reviews</span>
+          <strong class="metric-value" id="metricOpenReviews">0</strong>
+          <span class="metric-detail">Draft, submitted, or approved</span>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Closed homes</span>
+          <strong class="metric-value" id="metricClosedHomes">0</strong>
+          <span class="metric-detail" id="metricClosedHomesDetail">All tracked records</span>
+        </article>
+        <article class="metric-card metric-card-build-split">
+          <span class="metric-label">Average adjusted build</span>
+          <div class="metric-build-split" aria-label="Average adjusted build time by home type">
+            <div class="metric-build-type">
+              <span class="metric-build-type-label">Single Family</span>
+              <strong class="metric-build-type-value" id="metricAvgBuildSingleFamily">—</strong>
+              <span class="metric-build-type-detail">150-day goal</span>
+            </div>
+            <div class="metric-build-type">
+              <span class="metric-build-type-label">Townhomes</span>
+              <strong class="metric-build-type-value" id="metricAvgBuildTownhome">—</strong>
+              <span class="metric-build-type-detail">205-day goal</span>
+            </div>
+          </div>
+          <span class="metric-detail">Adjusted for approved exceptions</span>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Recommended bonuses</span>
+          <strong class="metric-value" id="metricBonusTotal">$0</strong>
+          <span class="metric-detail">Approved and paid records</span>
+        </article>
+        <article class="metric-card metric-card-alert">
+          <span class="metric-label">30-day punch watch</span>
+          <strong class="metric-value" id="metricPunchOverdue">0 overdue</strong>
+          <span class="metric-detail" id="metricPunchDueSoon">No punch lists due within 7 days</span>
+        </article>
+      </div>
+
+      <section class="super-summary-section" aria-labelledby="superSummaryHeading">
+        <div class="super-summary-header">
+          <div>
+            <p class="eyebrow">Paid bonus leaderboard</p>
+            <h2 id="superSummaryHeading">Superintendent bonus summary</h2>
+            <p>See how much each eligible superintendent has received, plus approved bonuses still waiting for payment.</p>
+          </div>
+          <span class="summary-key"><i></i> Based on Paid status or a paid date</span>
+        </div>
+        <div class="super-bonus-grid" id="superintendentBonusSummary"></div>
+      </section>
+
+      <section class="card tracker-card" aria-labelledby="recordsHeading">
+        <div class="card-header tracker-toolbar">
+          <div>
+            <h2 id="recordsHeading">Bonus reviews</h2>
+            <p class="card-subtitle">Records save automatically in this browser. Use backups or GitHub issues to share them.</p>
+          </div>
+          <div class="toolbar-actions">
+            <label class="search-field">
+              <span class="sr-only">Search reviews</span>
+              <input type="search" id="recordSearch" placeholder="Search super, lot, address..." autocomplete="off">
+            </label>
+            <label class="select-field compact-select">
+              <span class="sr-only">Filter by status</span>
+              <select id="statusFilter">
+                <option value="all">All statuses</option>
+                <option value="Draft">Draft</option>
+                <option value="Submitted">Submitted</option>
+                <option value="Approved">Approved</option>
+                <option value="Paid">Paid</option>
+                <option value="Not eligible">Not eligible</option>
+              </select>
+            </label>
+            <label class="select-field compact-select">
+              <span class="sr-only">Filter by superintendent</span>
+              <select id="superFilter">
+                <option value="all">All superintendents</option>
+              </select>
+            </label>
+            <label class="select-field compact-select">
+              <span class="sr-only">Filter by 30-day punch status</span>
+              <select id="punchFilter">
+                <option value="all">All punch statuses</option>
+                <option value="overdue">Punch overdue</option>
+                <option value="due-soon">Due within 7 days</option>
+                <option value="open">Punch open</option>
+                <option value="complete">Punch complete</option>
+                <option value="not-available">Needs close date</option>
+              </select>
+            </label>
+            <button type="button" class="button button-tertiary" id="exportCsvButton">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" id="recordsTableWrap">
+          <table class="data-table records-table">
+            <thead>
+              <tr>
+                <th scope="col">Superintendent</th>
+                <th scope="col">Lot / address</th>
+                <th scope="col">Closing date</th>
+                <th scope="col">30-day punch</th>
+                <th scope="col" class="number-cell">Adjusted build</th>
+                <th scope="col" class="number-cell">Criteria</th>
+                <th scope="col" class="number-cell">Bonus</th>
+                <th scope="col">Status</th>
+                <th scope="col"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="recordsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" id="recordsEmptyState" hidden>
+          <div class="empty-icon" aria-hidden="true">A</div>
+          <h3>No bonus reviews yet</h3>
+          <p>Create a review for a closed or active home and track the five bonus requirements.</p>
+          <button type="button" class="button button-primary" id="emptyNewReviewButton">Create first review</button>
+        </div>
+      </section>
+    </section>
+
+    <section id="editorView" class="view" aria-labelledby="editorTitle" hidden>
+      <div class="page-heading page-heading-split editor-page-heading">
+        <div>
+          <button type="button" class="text-button back-button" id="backToTrackerButton">← Back to tracker</button>
+          <p class="eyebrow">Individual home review</p>
+          <h1 id="editorTitle">New Superintendent Bonus Review</h1>
+          <p class="page-description" id="editorDescription">Enter the home details, verify the five bonus requirements, and document any delays outside the superintendent’s control.</p>
+        </div>
+        <div class="page-heading-actions">
+          <button type="button" class="button button-secondary" id="duplicateReviewButton">Duplicate</button>
+          <button type="button" class="button button-danger-ghost" id="deleteReviewButton">Delete</button>
+        </div>
+      </div>
+
+      <div class="editor-layout">
+        <form id="reviewForm" class="editor-main" novalidate>
+          <section class="card form-card" aria-labelledby="projectInfoHeading">
+            <div class="card-header">
+              <div>
+                <p class="section-number">01</p>
+                <h2 id="projectInfoHeading">Home and superintendent</h2>
+                <p class="card-subtitle">The basic information used to identify this bonus review.</p>
+              </div>
+            </div>
+            <div class="form-grid form-grid-3">
+              <label class="field field-span-2">
+                <span class="field-label">Superintendent name <span aria-hidden="true">*</span></span>
+                <select data-field="superintendent" required>
+                  <option value="">Select superintendent</option>
+                  <option value="Greg Worthington">Greg Worthington</option>
+                  <option value="Jackson Chambers">Jackson Chambers</option>
+                  <option value="Burke Nielson">Burke Nielson</option>
+                  <option value="Deryck Copley">Deryck Copley</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">Review status</span>
+                <select data-field="status">
+                  <option value="Draft">Draft</option>
+                  <option value="Submitted">Submitted</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Paid">Paid</option>
+                  <option value="Not eligible">Not eligible</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">Community</span>
+                <input type="text" data-field="community" placeholder="Community or phase">
+              </label>
+              <label class="field">
+                <span class="field-label">Lot number <span aria-hidden="true">*</span></span>
+                <input type="text" data-field="lotNumber" required placeholder="Lot 142">
+              </label>
+              <label class="field">
+                <span class="field-label">Plan / model</span>
+                <input type="text" data-field="planName" placeholder="Floor plan">
+              </label>
+              <label class="field">
+                <span class="field-label">Home type</span>
+                <select data-field="homeType">
+                  <option value="Single Family">Single Family</option>
+                  <option value="Townhome">Townhome</option>
+                </select>
+              </label>
+              <label class="field field-span-2">
+                <span class="field-label">Property address <span aria-hidden="true">*</span></span>
+                <input type="text" data-field="address" required autocomplete="street-address" placeholder="Street address, city, state, ZIP">
+              </label>
+              <label class="field">
+                <span class="field-label">Permit / job number</span>
+                <input type="text" data-field="jobNumber" placeholder="Optional">
+              </label>
+              <label class="field">
+                <span class="field-label">Base bonus amount</span>
+                <span class="input-prefix-wrap">
+                  <span class="input-prefix">$</span>
+                  <input type="number" data-field="baseBonus" value="350" readonly aria-readonly="true" tabindex="-1">
+                </span>
+                <span class="field-help">Fixed Arive Homes base bonus. This amount cannot be changed.</span>
+              </label>
+              <label class="field field-span-2">
+                <span class="field-label">Review period / quarter</span>
+                <input type="text" data-field="reviewPeriod" placeholder="Example: Q2 2026">
+              </label>
+            </div>
+          </section>
+
+          <section class="card form-card" aria-labelledby="scheduleHeading">
+            <div class="card-header card-header-split">
+              <div>
+                <p class="section-number">02</p>
+                <h2 id="scheduleHeading">Build time and closing</h2>
+                <p class="card-subtitle">Build time is measured from dig to Certificate of Occupancy. Approved outside-control delays are deducted before the applicable bonus limit is evaluated.</p>
+              </div>
+              <span class="info-badge" id="dayCountBadge">Calendar days</span>
+            </div>
+
+            <div class="form-grid form-grid-3">
+              <label class="field">
+                <span class="field-label">Dig date <span aria-hidden="true">*</span></span>
+                <input type="date" data-field="buildStartDate" required>
+                <span class="field-help">First day excavation begins.</span>
+              </label>
+              <label class="field">
+                <span class="field-label">Start milestone</span>
+                <select data-field="startMilestone">
+                  <option value="Excavation start">Dig / excavation start</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">Bonus build-time goal</span>
+                <select id="buildTimeLimitDisplay" data-field="targetBuildDays">
+                  <option value="150">150 days - Single Family</option>
+                  <option value="205">205 days - Townhome</option>
+                </select>
+                <span class="field-help" id="buildTimeGoalConfirmation">Current goal: 150 days - Single Family</span>
+              </label>
+              <label class="field">
+                <span class="field-label">Certificate of Occupancy date</span>
+                <input type="date" data-field="actualCloseDate">
+                <span class="field-help">Used to measure build time from dig to CO.</span>
+              </label>
+              <label class="field">
+                <span class="field-label">Closing date</span>
+                <input type="date" data-field="closingDate">
+                <span class="field-help">Used to calculate the 30-day punch-list deadline.</span>
+              </label>
+              <label class="field field-highlight">
+                <span class="field-label">30-day punch-list due date</span>
+                <input type="text" id="punch30DueDate" readonly aria-readonly="true" placeholder="Calculated after closing">
+                <span class="field-help" id="punch30DueDateHelp">Automatically calculated as 30 calendar days after closing.</span>
+              </label>
+            </div>
+
+            <div class="schedule-metrics" aria-label="Build time calculations">
+              <div class="schedule-metric">
+                <span>Gross build time</span>
+                <strong id="grossBuildDays">—</strong>
+                <small id="grossBuildDaysHelp">Enter the dig date and CO date</small>
+              </div>
+              <div class="schedule-metric">
+                <span>Approved delay days</span>
+                <strong id="approvedDelayDays">0</strong>
+                <small>Overlapping dates count once</small>
+              </div>
+              <div class="schedule-metric schedule-metric-emphasis">
+                <span>Adjusted build time</span>
+                <strong id="adjustedBuildDays">—</strong>
+                <small>Gross time less approved exceptions</small>
+              </div>
+              <div class="schedule-metric">
+                <span>Variance to build-time limit</span>
+                <strong id="buildVariance">—</strong>
+                <small id="buildVarianceHelp">Applicable bonus limit</small>
+              </div>
+            </div>
+          </section>
+
+          <section class="card form-card" aria-labelledby="delayHeading">
+            <div class="card-header card-header-split">
+              <div>
+                <p class="section-number">03</p>
+                <h2 id="delayHeading">Delay exception log</h2>
+                <p class="card-subtitle">Only approved delays marked outside the superintendent’s control reduce adjusted build time.</p>
+              </div>
+              <button type="button" class="button button-secondary button-compact" id="addDelayButton">Add delay</button>
+            </div>
+
+            <div class="policy-note">
+              <strong>Fairness rule:</strong> document the cause, date range, and approver. City or utility delays, approved buyer/company changes, unusual weather, design issues, and material allocations can qualify. Rework, missed inspections, or poor sequencing normally should not.
+            </div>
+
+            <div class="table-wrap delay-table-wrap">
+              <table class="data-table delay-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Cause</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">End</th>
+                    <th scope="col">Outside control</th>
+                    <th scope="col">Decision</th>
+                    <th scope="col">Approved by</th>
+                    <th scope="col" class="number-cell">Days</th>
+                    <th scope="col">Notes / documentation</th>
+                    <th scope="col"><span class="sr-only">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody id="delayTableBody"></tbody>
+              </table>
+            </div>
+            <div class="inline-empty" id="delayEmptyState">No delays logged. Add one only when a schedule exception needs documentation.</div>
+          </section>
+
+          <section class="card form-card" aria-labelledby="criteriaHeading">
+            <div class="card-header">
+              <div>
+                <p class="section-number">04</p>
+                <h2 id="criteriaHeading">Bonus criteria</h2>
+                <p class="card-subtitle">All five requirements must be complete for the home to qualify for the bonus.</p>
+              </div>
+            </div>
+            <div id="criteriaList" class="criteria-list"></div>
+          </section>
+
+          <section class="card form-card" aria-labelledby="photosHeading">
+            <div class="card-header">
+              <div>
+                <p class="section-number">05</p>
+                <h2 id="photosHeading">Final grade photo verification</h2>
+                <p class="card-subtitle">The actual photos stay in Dropbox. Use this section to confirm the required final-grade photos were completed and uploaded.</p>
+              </div>
+            </div>
+
+            <div class="verification-panel">
+              <label class="verification-check">
+                <input type="checkbox" data-field="finalGradePhotosComplete">
+                <span class="verification-checkmark" aria-hidden="true">✓</span>
+                <span>
+                  <strong>Final-grade photos have been uploaded to Dropbox</strong>
+                  <small>Mark this complete after the required jobsite photos are saved in the normal Dropbox folder.</small>
+                </span>
+              </label>
+              <div class="form-grid form-grid-2 verification-fields">
+                <label class="field">
+                  <span class="field-label">Verified date</span>
+                  <input type="date" data-field="finalGradePhotosVerifiedDate">
+                </label>
+                <label class="field">
+                  <span class="field-label">Notes or Dropbox reference</span>
+                  <input type="text" data-field="finalGradePhotosNotes" placeholder="Optional folder name, initials, or note">
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <section class="card form-card" aria-labelledby="approvalHeading">
+            <div class="card-header">
+              <div>
+                <p class="section-number">06</p>
+                <h2 id="approvalHeading">Review, approval, and payment</h2>
+                <p class="card-subtitle">Keep a simple audit trail for who reviewed, approved, and paid the bonus.</p>
+              </div>
+            </div>
+            <div class="form-grid form-grid-3">
+              <label class="field">
+                <span class="field-label">Reviewed by</span>
+                <input type="text" data-field="reviewedBy" placeholder="Name">
+              </label>
+              <label class="field">
+                <span class="field-label">Review date</span>
+                <input type="date" data-field="reviewDate">
+              </label>
+              <label class="field">
+                <span class="field-label">Submitted date</span>
+                <input type="date" data-field="submittedDate">
+              </label>
+              <label class="field">
+                <span class="field-label">Approved by</span>
+                <input type="text" data-field="approvedBy" placeholder="Name">
+              </label>
+              <label class="field">
+                <span class="field-label">Approval date</span>
+                <input type="date" data-field="approvedDate">
+              </label>
+              <label class="field">
+                <span class="field-label">Paid date</span>
+                <input type="date" data-field="paidDate">
+              </label>
+              <label class="field field-span-3">
+                <span class="field-label">Overall review notes</span>
+                <textarea data-field="reviewNotes" rows="4" placeholder="Wins, concerns, coaching notes, or context for the final decision."></textarea>
+              </label>
+              <label class="field field-span-3">
+                <span class="field-label">Approval notes</span>
+                <textarea data-field="approvalNotes" rows="3" placeholder="Final management decision or any adjustment to the calculated recommendation."></textarea>
+              </label>
+              <label class="field">
+                <span class="field-label">Manual approved bonus</span>
+                <span class="input-prefix-wrap">
+                  <span class="input-prefix">$</span>
+                  <input type="number" data-field="manualApprovedBonus" min="0" step="50" inputmode="decimal" placeholder="Use calculated amount">
+                </span>
+                <span class="field-help">Optional override; leave blank to use the calculated recommendation.</span>
+              </label>
+            </div>
+          </section>
+        </form>
+
+        <aside class="editor-sidebar" aria-label="Live bonus summary">
+          <section class="summary-card">
+            <div class="summary-card-header">
+              <div>
+                <span class="summary-kicker">Live recommendation</span>
+                <h2 id="summaryRecordName">New review</h2>
+              </div>
+              <span class="status-chip status-draft" id="summaryStatus">Draft</span>
+            </div>
+
+            <div class="score-ring-wrap">
+              <div class="score-ring" id="scoreRing" style="--score: 0">
+                <div class="score-ring-inner">
+                  <strong id="summaryScore">0/5</strong>
+                  <span>requirements</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bonus-total">
+              <span>Recommended bonus</span>
+              <strong id="summaryBonus">$0</strong>
+              <small id="summaryMultiplier">0% of base bonus</small>
+            </div>
+
+            <dl class="summary-details">
+              <div>
+                <dt>Base bonus</dt>
+                <dd id="summaryBaseBonus">$0</dd>
+              </div>
+              <div>
+                <dt>Gross build</dt>
+                <dd id="summaryGrossBuild">—</dd>
+              </div>
+              <div>
+                <dt>Approved delays</dt>
+                <dd id="summaryDelayDays">0 days</dd>
+              </div>
+              <div>
+                <dt>Adjusted build</dt>
+                <dd id="summaryAdjustedBuild">—</dd>
+              </div>
+              <div>
+                <dt>Final-grade photos</dt>
+                <dd id="summaryFinalGradeStatus">Not complete</dd>
+              </div>
+            </dl>
+
+            <div class="readiness-block">
+              <h3>Approval readiness</h3>
+              <ul class="readiness-list" id="readinessList"></ul>
+            </div>
+
+            <div class="summary-actions">
+              <button type="button" class="button button-primary button-full" id="saveReviewButton">Save now</button>
+              <button type="button" class="button button-secondary button-full" id="downloadReportButton">Download shareable report</button>
+              <button type="button" class="button button-secondary button-full" id="printReviewButton">Print / save PDF</button>
+              <button type="button" class="button button-secondary button-full" id="exportRecordButton">Export editable record</button>
+              <button type="button" class="button button-tertiary button-full" id="githubIssueButton">Create GitHub issue</button>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <section id="settingsView" class="view" aria-labelledby="settingsTitle" hidden>
+      <div class="page-heading page-heading-split">
+        <div>
+          <p class="eyebrow">Program administration</p>
+          <h1 id="settingsTitle">Program Settings</h1>
+          <p class="page-description">Manage the program name and GitHub connection. The $350 base bonus is fixed and cannot be changed. Bonus eligibility uses the five fixed Arive Homes requirements below.</p>
+        </div>
+        <div class="page-heading-actions">
+          <button type="button" class="button button-secondary" id="resetSettingsButton">Reset program defaults</button>
+          <button type="button" class="button button-primary" id="saveSettingsButton">Save settings</button>
+        </div>
+      </div>
+
+      <div class="settings-layout">
+        <section class="card form-card" aria-labelledby="generalSettingsHeading">
+          <div class="card-header">
+            <div>
+              <h2 id="generalSettingsHeading">Program defaults</h2>
+              <p class="card-subtitle">These values prefill new reviews.</p>
+            </div>
+          </div>
+          <div class="form-grid form-grid-3">
+            <label class="field field-span-2">
+              <span class="field-label">Program name</span>
+              <input type="text" id="settingsProgramName">
+            </label>
+            <label class="field">
+              <span class="field-label">Base bonus (fixed)</span>
+              <span class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" id="settingsDefaultBaseBonus" value="350" readonly aria-readonly="true" tabindex="-1">
+              </span>
+              <span class="field-help">Locked at $350 for every bonus review.</span>
+            </label>
+            <label class="field">
+              <span class="field-label">Build-time day count</span>
+              <select id="settingsDayCountMode" disabled aria-disabled="true">
+                <option value="calendar">Calendar days</option>
+              </select>
+              <span class="field-help">Calendar days are fixed. Choose 150 or 205 in each home review using the Build-time goal field.</span>
+            </label>
+            <label class="field field-span-2">
+              <span class="field-label">GitHub repository</span>
+              <input type="text" id="settingsGithubRepo" placeholder="owner/repository">
+              <span class="field-help">Used by the “Create GitHub issue” button. Leave blank to copy issue text instead.</span>
+            </label>
+          </div>
+        </section>
+
+
+        <section class="card form-card" aria-labelledby="googleReminderHeading">
+          <div class="card-header card-header-split">
+            <div>
+              <h2 id="googleReminderHeading">30-Day Punch List Email Reminders</h2>
+              <p class="card-subtitle">Connect this tracker to the private Google Sheet so closing dates and punch-list status can drive automatic reminder emails.</p>
+            </div>
+            <span class="connection-status" id="googleSyncStatus">Not connected yet</span>
+          </div>
+          <div class="form-grid form-grid-2">
+            <label class="field field-span-2">
+              <span class="field-label">Google Apps Script Web App URL</span>
+              <input type="url" id="settingsGoogleWebAppUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
+              <span class="field-help">Paste the deployed Web App URL from the reminder script. It is stored only in this browser with your tracker data.</span>
+            </label>
+            <label class="field field-span-2">
+              <span class="field-label">Sync key</span>
+              <input type="password" id="settingsGoogleSyncKey" placeholder="Paste your private sync key" autocomplete="new-password">
+              <span class="field-help">Use the same key you store in Apps Script Project Settings. Do not commit this key to GitHub.</span>
+            </label>
+          </div>
+          <div class="data-actions-grid reminder-actions">
+            <button type="button" class="button button-primary" id="syncGoogleNowButton">Sync all records now</button>
+            <button type="button" class="button button-secondary" id="openGoogleSheetButton">Open reminder Google Sheet</button>
+          </div>
+          <div class="settings-rule-grid reminder-rule-grid">
+            <div class="settings-rule"><strong>Recipients</strong><span>brendan@arivehomes.com and robbie@arivehomes.com</span></div>
+            <div class="settings-rule"><strong>Reminder window</strong><span>Daily at 7:00 AM Mountain Time when an incomplete 30-day punch list is due within 7 days or is overdue.</span></div>
+          </div>
+        </section>
+
+        <section class="card form-card" aria-labelledby="eligibilityRulesHeading">
+          <div class="card-header">
+            <div>
+              <h2 id="eligibilityRulesHeading">Bonus eligibility rules</h2>
+              <p class="card-subtitle">These five requirements are fixed for the Arive Homes superintendent bonus program.</p>
+            </div>
+          </div>
+          <div class="settings-rule-grid">
+            <div class="settings-rule"><strong>1. Build time</strong><span>Dig to Certificate of Occupancy: 150 days or less for single-family homes; 205 days or less for townhomes, after approved outside-control delays.</span></div>
+            <div class="settings-rule"><strong>2. Final grade photos</strong><span>Photos must be uploaded to Dropbox and verified in the review.</span></div>
+            <div class="settings-rule"><strong>3. 30-day punch list</strong><span>All items must be complete within 30 calendar days of closing and verified by homeowner signature, or written management approval when a homeowner signature is not reasonably obtainable.</span></div>
+            <div class="settings-rule"><strong>4. Safety / SWPPP inspections</strong><span>Required safety and SWPPP inspections must be completed and documented.</span></div>
+            <div class="settings-rule"><strong>5. End of Build Checklist</strong><span>Every end-of-build checklist item must be completed, including city sidewalk approval/sign-off or an approved documented exception.</span></div>
+          </div>
+          <p class="settings-footnote">All five requirements must be complete for the full base bonus to be recommended.</p>
+        </section>
+
+        <section class="card form-card" aria-labelledby="criteriaSettingsHeading" hidden aria-hidden="true">
+          <div class="card-header card-header-split">
+            <div>
+              <h2 id="criteriaSettingsHeading">Bonus criteria and weights</h2>
+              <p class="card-subtitle">Fixed program rules used by the eligibility calculation.</p>
+            </div>
+            <div class="weight-total" id="weightTotalBadge">100% total</div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table settings-table">
+              <thead>
+                <tr>
+                  <th scope="col">Criterion</th>
+                  <th scope="col" class="number-cell">Weight</th>
+                  <th scope="col">Scoring guidance</th>
+                  <th scope="col">Automatic</th>
+                  <th scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="settingsCriteriaBody"></tbody>
+            </table>
+          </div>
+          <button type="button" class="button button-tertiary button-compact settings-add-button" id="addCriterionButton">Add criterion</button>
+        </section>
+
+        <section class="card form-card" aria-labelledby="payoutSettingsHeading" hidden aria-hidden="true">
+          <div class="card-header card-header-split">
+            <div>
+              <h2 id="payoutSettingsHeading">Payout tiers</h2>
+              <p class="card-subtitle">All five fixed requirements must be complete for the full base bonus.</p>
+            </div>
+            <button type="button" class="button button-tertiary button-compact" id="addPayoutTierButton">Add tier</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table settings-table compact-settings-table">
+              <thead>
+                <tr>
+                  <th scope="col">Minimum score</th>
+                  <th scope="col">Maximum score</th>
+                  <th scope="col">Payout of base</th>
+                  <th scope="col">Label</th>
+                  <th scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="settingsPayoutBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card form-card" aria-labelledby="scheduleSettingsHeading" hidden aria-hidden="true">
+          <div class="card-header card-header-split">
+            <div>
+              <h2 id="scheduleSettingsHeading">Automatic schedule score</h2>
+              <p class="card-subtitle">The score uses adjusted build time, not gross build time. Delay dates must be approved and outside the superintendent’s control.</p>
+            </div>
+            <button type="button" class="button button-tertiary button-compact" id="addScheduleBandButton">Add band</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table settings-table compact-settings-table">
+              <thead>
+                <tr>
+                  <th scope="col">Maximum days late</th>
+                  <th scope="col">Schedule score</th>
+                  <th scope="col">Label</th>
+                  <th scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="settingsScheduleBody"></tbody>
+            </table>
+          </div>
+          <p class="settings-footnote">Use a blank maximum for the final catch-all band. A negative variance (ahead of target) falls into the first band.</p>
+        </section>
+
+        <section class="card form-card danger-zone" aria-labelledby="dataSettingsHeading">
+          <div class="card-header">
+            <div>
+              <h2 id="dataSettingsHeading">Data and backups</h2>
+              <p class="card-subtitle">The app stores records in this browser. Export a backup before clearing browser data or moving to another computer.</p>
+            </div>
+          </div>
+          <div class="data-actions-grid">
+            <button type="button" class="button button-secondary" id="settingsExportAllButton">Export full backup</button>
+            <button type="button" class="button button-secondary" id="settingsImportAllButton">Import full backup</button>
+            <button type="button" class="button button-danger-ghost" id="clearAllDataButton">Clear all records</button>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>Arive Homes Superintendent Bonus Program</span>
+    <span>Local-first • Google reminder sync • GitHub Pages ready</span>
+  </footer>
+
+  <datalist id="superintendentList"></datalist>
+  <input type="file" id="importAllInput" accept="application/json,.json" hidden>
+  <input type="file" id="importRecordInput" accept="application/json,.json" hidden>
+
+  <dialog id="confirmDialog" class="confirm-dialog">
+    <form method="dialog">
+      <h2 id="confirmDialogTitle">Confirm action</h2>
+      <p id="confirmDialogMessage">Are you sure?</p>
+      <div class="dialog-actions">
+        <button value="cancel" class="button button-secondary">Cancel</button>
+        <button value="confirm" class="button button-danger" id="confirmDialogConfirm">Confirm</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="app.js?v=13" defer></script>
+</body>
+</html>
