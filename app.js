@@ -2,12 +2,19 @@
   "use strict";
 
   const APP_ID = "arive-superintendent-bonus";
-  const APP_VERSION = 15;
+  const APP_VERSION = 16;
   const DB_NAME = "arive-superintendent-bonus-db";
   const DB_STORE = "app-state";
   const DB_KEY = "primary";
   const LOCAL_STORAGE_KEY = "arive-superintendent-bonus-state";
   const BASE_BONUS_AMOUNT = 350;
+  const BONUS_COMPONENT_AMOUNTS = Object.freeze({
+    "build-time": 175,
+    "punch-30": 70,
+    "safety-swppp": 50,
+    "final-grade-photos": 35,
+    "superintendent-checklist": 20
+  });
   const BUILD_TIME_LIMIT_DAYS = 150;
   const TOWNHOME_BUILD_TIME_LIMIT_DAYS = 205;
   const ELIGIBLE_SUPERINTENDENTS = [
@@ -401,6 +408,38 @@
     return state.records.find((record) => record.id === currentRecordId) || null;
   }
 
+  function getCommunityCode(record) {
+    const community = String(record?.community || "").trim();
+    if (!community) return "";
+    const parenthetical = community.match(/\(([A-Za-z0-9-]{1,8})\)\s*$/);
+    if (parenthetical) return parenthetical[1].toUpperCase();
+    if (/^[A-Za-z0-9-]{1,8}$/.test(community)) return community.toUpperCase();
+    return "";
+  }
+
+  function getDisplayLotNumber(record, communityCode = getCommunityCode(record)) {
+    let lot = String(record?.lotNumber || "").trim();
+    if (!lot) return "";
+    if (communityCode) {
+      const prefix = communityCode.toUpperCase() + " ";
+      if (lot.toUpperCase().startsWith(prefix)) {
+        lot = lot.slice(prefix.length).trim();
+      }
+    }
+    if (/^\d+$/.test(lot)) lot = lot.padStart(2, "0");
+    return lot;
+  }
+
+  function formatRecordIdentity(record) {
+    const parts = [];
+    if (record?.superintendent) parts.push(String(record.superintendent).trim());
+    const communityCode = getCommunityCode(record);
+    const lot = getDisplayLotNumber(record, communityCode);
+    if (communityCode) parts.push(communityCode);
+    if (lot) parts.push(lot);
+    return parts.filter(Boolean).join(" ");
+  }
+
   function renderTracker() {
     renderMetrics();
     renderSuperintendentBonusSummary();
@@ -567,7 +606,7 @@
     return `
       <tr data-record-id="${escapeAttribute(record.id)}" tabindex="0" aria-label="Open review for ${escapeAttribute(record.superintendent || "unnamed superintendent")}">
         <td>
-          <span class="record-primary">${escapeHtml(record.superintendent || "Unnamed superintendent")}</span>
+          <span class="record-primary">${escapeHtml(formatRecordIdentity(record) || record.superintendent || "Unnamed superintendent")}</span>
           <span class="record-secondary">${escapeHtml(record.community || record.reviewPeriod || "No community")}</span>
         </td>
         <td>
@@ -739,7 +778,7 @@
   }
 
   function updateEditorHeading(record) {
-    const identity = [record.superintendent, record.lotNumber].filter(Boolean).join(" • ");
+    const identity = formatRecordIdentity(record);
     refs.editorTitle.textContent = identity || "New Superintendent Bonus Review";
     refs.editorDescription.textContent = record.address || "Enter the home details, verify the five bonus requirements, and document any delays outside the superintendent’s control.";
   }
@@ -799,7 +838,7 @@
 
     touchRecord(record);
 
-    if (["superintendent", "lotNumber", "address", "status"].includes(field)) {
+    if (["superintendent", "community", "lotNumber", "address", "status"].includes(field)) {
       updateEditorHeading(record);
     }
 
@@ -915,27 +954,29 @@
 
     const buildStatus = calculation.buildTimeAvailable
       ? calculation.buildTimePass
-        ? { label: "Complete", className: "is-pass", detail: `${calculation.adjustedBuildDays} adjusted days — within the ${calculation.buildTimeLimitDays}-day limit.` }
-        : { label: "Not eligible", className: "is-fail", detail: `${calculation.adjustedBuildDays} adjusted days — ${calculation.adjustedBuildDays - calculation.buildTimeLimitDays} days over the limit.` }
-      : { label: "Needs CO date", className: "is-pending", detail: `Enter the dig date and Certificate of Occupancy date. Approved exception days will be deducted automatically.` };
+        ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["build-time"])}`, className: "is-pass", detail: `${calculation.adjustedBuildDays} adjusted days — within the ${calculation.buildTimeLimitDays}-day limit.` }
+        : { label: "Not eligible • $0", className: "is-fail", detail: `${calculation.adjustedBuildDays} adjusted days — ${calculation.adjustedBuildDays - calculation.buildTimeLimitDays} days over the limit.` }
+      : { label: `${formatCurrency(BONUS_COMPONENT_AMOUNTS["build-time"])} available`, className: "is-pending", detail: `Enter the dig date and Certificate of Occupancy date. Approved exception days will be deducted automatically.` };
 
     const photoStatus = calculation.finalGradePhotosPass
-      ? { label: "Complete", className: "is-pass", detail: record.finalGradePhotosVerifiedDate ? `Verified ${formatDate(record.finalGradePhotosVerifiedDate)}.` : "Verified as uploaded to Dropbox." }
-      : { label: "Incomplete", className: "is-pending", detail: "Confirm the final-grade photos have been uploaded to Dropbox." };
+      ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["final-grade-photos"])}`, className: "is-pass", detail: record.finalGradePhotosVerifiedDate ? `Verified ${formatDate(record.finalGradePhotosVerifiedDate)}.` : "Verified as uploaded to Dropbox." }
+      : { label: `${formatCurrency(BONUS_COMPONENT_AMOUNTS["final-grade-photos"])} available`, className: "is-pending", detail: "Confirm the final-grade photos have been uploaded to Dropbox." };
 
-    const punchStatus = calculation.punch30Pass
-      ? { label: "Complete", className: "is-pass", detail: calculation.punch30TrackingDetail }
+    const punchStatus = calculation.punch30Complete
+      ? calculation.punch30Pass
+        ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["punch-30"])}`, className: "is-pass", detail: calculation.punch30TrackingDetail }
+        : { label: "Complete late • $0", className: "is-fail", detail: calculation.punch30TrackingDetail }
       : calculation.punch30TrackingStatus === "overdue"
-        ? { label: "Overdue", className: "is-fail", detail: calculation.punch30TrackingDetail }
-        : { label: calculation.punch30TrackingStatus === "due-soon" ? "Due soon" : "Open", className: "is-pending", detail: calculation.punch30TrackingDetail };
+        ? { label: "Overdue • $0", className: "is-fail", detail: calculation.punch30TrackingDetail }
+        : { label: `${calculation.punch30TrackingStatus === "due-soon" ? "Due soon" : "Open"} • ${formatCurrency(BONUS_COMPONENT_AMOUNTS["punch-30"])} available`, className: "is-pending", detail: calculation.punch30TrackingDetail };
 
     const safetyStatus = calculation.safetySwpppPass
-      ? { label: "Complete", className: "is-pass" }
-      : { label: "Incomplete", className: "is-pending" };
+      ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["safety-swppp"])}`, className: "is-pass" }
+      : { label: `${formatCurrency(BONUS_COMPONENT_AMOUNTS["safety-swppp"])} available`, className: "is-pending" };
 
     const checklistStatus = calculation.superintendentChecklistPass
-      ? { label: "Complete", className: "is-pass", detail: record.superintendentChecklistCompletedDate ? `Completed ${formatDate(record.superintendentChecklistCompletedDate)}.` : "Marked complete." }
-      : { label: "Incomplete", className: "is-pending", detail: "Confirm the required End of Build Checklist has been completed." };
+      ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["superintendent-checklist"])}`, className: "is-pass", detail: record.superintendentChecklistCompletedDate ? `Completed ${formatDate(record.superintendentChecklistCompletedDate)}.` : "Marked complete." }
+      : { label: `${formatCurrency(BONUS_COMPONENT_AMOUNTS["superintendent-checklist"])} available`, className: "is-pending", detail: "Confirm the required End of Build Checklist has been completed." };
 
     refs.criteriaList.innerHTML = `
       <article class="eligibility-criterion ${buildStatus.className}">
@@ -1104,7 +1145,7 @@
     refs.punch30DueDate.value = calculation.punch30DueDate ? formatDate(calculation.punch30DueDate) : "";
     refs.punch30DueDateHelp.textContent = calculation.punch30TrackingDetail;
 
-    const recordName = [record.superintendent, record.lotNumber].filter(Boolean).join(" • ") || "New review";
+    const recordName = formatRecordIdentity(record) || "New review";
     refs.summaryRecordName.textContent = recordName;
     refs.summaryStatus.textContent = record.status || "Draft";
     refs.summaryStatus.className = `status-chip ${statusClass(record.status)}`;
@@ -1113,7 +1154,7 @@
     refs.summaryBonus.textContent = formatCurrency(calculation.finalBonus);
     refs.summaryMultiplier.textContent = calculation.hasManualBonus
       ? `Manual override; calculated amount ${formatCurrency(calculation.recommendedBonus)}`
-      : `${calculation.criteriaPassed}/5 requirements complete • ${calculation.payoutLabel}`;
+      : `${formatCurrency(calculation.recommendedBonus)} of ${formatCurrency(calculation.baseBonus)} earned • ${calculation.criteriaPassed}/5 requirements complete`;
     refs.summaryBaseBonus.textContent = formatCurrency(calculation.baseBonus);
     refs.summaryGrossBuild.textContent = calculation.grossBuildDays === null ? "—" : `${calculation.grossBuildDays} days${record.actualCloseDate ? "" : " to date"}`;
     refs.summaryDelayDays.textContent = `${calculation.approvedDelayDays} day${calculation.approvedDelayDays === 1 ? "" : "s"}`;
@@ -1175,17 +1216,23 @@
     const varianceDays = adjustedBuildDays !== null ? adjustedBuildDays - buildTimeLimitDays : null;
 
     const finalGradePhotosPass = Boolean(record.finalGradePhotosComplete);
-    const punch30Pass = Boolean(record.punch30Complete);
+    const punch30Complete = Boolean(record.punch30Complete);
     const punch30DueDate = record.closingDate ? addCalendarDays(record.closingDate, 30) : "";
+    const punch30CompletedOnTime = !punch30Complete
+      ? false
+      : !punch30DueDate || !record.punch30CompletedDate || record.punch30CompletedDate <= punch30DueDate;
+    const punch30Pass = punch30Complete && punch30CompletedOnTime;
     const punch30DaysRemaining = punch30DueDate ? differenceInCalendarDays(todayIso(), punch30DueDate) : null;
     let punch30TrackingStatus = "not-available";
     let punch30TrackingLabel = "Needs close date";
     let punch30TrackingDetail = "Enter the closing date to calculate the 30-day deadline.";
-    if (punch30Pass) {
+    if (punch30Complete) {
       punch30TrackingStatus = "complete";
-      punch30TrackingLabel = "Complete";
+      punch30TrackingLabel = punch30Pass ? "Complete" : "Complete late";
       punch30TrackingDetail = record.punch30CompletedDate
-        ? `Completed ${formatDate(record.punch30CompletedDate)}.`
+        ? punch30Pass
+          ? `Completed ${formatDate(record.punch30CompletedDate)} on time.`
+          : `Completed ${formatDate(record.punch30CompletedDate)} after the ${formatDate(punch30DueDate)} deadline; the $70 punch-list bonus was not earned.`
         : "Marked complete.";
     } else if (punch30DueDate && punch30DaysRemaining !== null) {
       if (punch30DaysRemaining < 0) {
@@ -1235,6 +1282,7 @@
         "safety-swppp": record.safetySwpppNotes
       };
       const note = notesByCriterion[criterion.id] || result.evidence;
+      const availableAmount = BONUS_COMPONENT_AMOUNTS[criterion.id] || 0;
       return {
         id: criterion.id,
         name: criterion.name,
@@ -1245,6 +1293,8 @@
         note,
         auto: criterion.id === "build-time" || criterion.id === "final-grade-photos",
         weightedContribution: score * weight / 100,
+        availableAmount,
+        earnedAmount: result.pass ? availableAmount : 0,
         touched: result.touched
       };
     });
@@ -1252,10 +1302,14 @@
     const criteriaPassed = [buildTimePass, finalGradePhotosPass, punch30Pass, safetySwpppPass, superintendentChecklistPass].filter(Boolean).length;
     const allCriteriaPass = criteriaPassed === 5;
     const weightedScore = totalWeight > 0 ? weightedPoints / totalWeight : 0;
-    const multiplier = allCriteriaPass ? 1 : 0;
-    const payoutLabel = allCriteriaPass ? "Bonus eligible" : "Criteria incomplete";
     const baseBonus = BASE_BONUS_AMOUNT;
-    const recommendedBonus = roundCurrency(baseBonus * multiplier);
+    const recommendedBonus = roundCurrency(criteriaDetails.reduce((sum, criterion) => sum + criterion.earnedAmount, 0));
+    const multiplier = baseBonus > 0 ? recommendedBonus / baseBonus : 0;
+    const payoutLabel = recommendedBonus >= baseBonus
+      ? "Full $350 bonus earned"
+      : recommendedBonus > 0
+        ? "Partial bonus earned"
+        : "No bonus earned";
     const manualBonus = record.manualApprovedBonus === "" || record.manualApprovedBonus === null || record.manualApprovedBonus === undefined
       ? null
       : Math.max(0, numberOr(record.manualApprovedBonus, 0));
@@ -1277,6 +1331,8 @@
       buildTimeAvailable,
       buildTimePass,
       finalGradePhotosPass,
+      punch30Complete,
+      punch30CompletedOnTime,
       punch30Pass,
       punch30DueDate,
       punch30DaysRemaining,
