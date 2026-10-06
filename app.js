@@ -413,9 +413,9 @@
   function getCommunityCode(record) {
     const community = String(record?.community || "").trim();
     if (!community) return "";
-    const parenthetical = community.match(/\(([A-Za-z0-9-]{1,8})\)\s*$/);
-    if (parenthetical) return parenthetical[1].toUpperCase();
-    if (/^[A-Za-z0-9-]{1,8}$/.test(community)) return community.toUpperCase();
+    const parenthetical = community.match(/\(([A-Za-z0-9 -]{1,10})\)\s*$/);
+    if (parenthetical) return parenthetical[1].trim().toUpperCase();
+    if (/^[A-Za-z0-9 -]{1,10}$/.test(community)) return community.trim().toUpperCase();
     return "";
   }
 
