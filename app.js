@@ -2,7 +2,7 @@
   "use strict";
 
   const APP_ID = "arive-superintendent-bonus";
-  const APP_VERSION = 16;
+  const APP_VERSION = 17;
   const DB_NAME = "arive-superintendent-bonus-db";
   const DB_STORE = "app-state";
   const DB_KEY = "primary";
@@ -375,6 +375,8 @@
       buildStartDate: "",
       startMilestone: "Excavation start",
       targetBuildDays: BUILD_TIME_LIMIT_DAYS,
+      buildTimeManualPass: false,
+      buildTimeManualNote: "",
       actualCloseDate: "",
       closingDate: "",
       delays: [],
@@ -680,6 +682,8 @@
     copy.safetySwpppNotes = "";
     copy.superintendentChecklistComplete = false;
     copy.superintendentChecklistCompletedDate = "";
+    copy.buildTimeManualPass = false;
+    copy.buildTimeManualNote = "";
     copy.lotNumber = "";
     copy.address = "";
     copy.jobNumber = "";
@@ -952,11 +956,19 @@
     if (!record) return;
     const calculation = getRecordCalculations(record);
 
-    const buildStatus = calculation.buildTimeAvailable
-      ? calculation.buildTimePass
-        ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["build-time"])}`, className: "is-pass", detail: `${calculation.adjustedBuildDays} adjusted days — within the ${calculation.buildTimeLimitDays}-day limit.` }
-        : { label: "Not eligible • $0", className: "is-fail", detail: `${calculation.adjustedBuildDays} adjusted days — ${calculation.adjustedBuildDays - calculation.buildTimeLimitDays} days over the limit.` }
-      : { label: `${formatCurrency(BONUS_COMPONENT_AMOUNTS["build-time"])} available`, className: "is-pending", detail: `Enter the dig date and Certificate of Occupancy date. Approved exception days will be deducted automatically.` };
+    const buildStatus = calculation.buildTimeManualPass
+      ? {
+          label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["build-time"])}`,
+          className: "is-pass",
+          detail: record.buildTimeManualNote || (calculation.buildTimeAvailable
+            ? `Management-approved build-time pass. Calculated build time: ${calculation.adjustedBuildDays} days vs. ${calculation.buildTimeLimitDays}-day target.`
+            : "Management-approved build-time pass.")
+        }
+      : calculation.buildTimeAvailable
+        ? calculation.buildTimePass
+          ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["build-time"])}`, className: "is-pass", detail: `${calculation.adjustedBuildDays} adjusted days — within the ${calculation.buildTimeLimitDays}-day limit.` }
+          : { label: "Not eligible • $0", className: "is-fail", detail: `${calculation.adjustedBuildDays} adjusted days — ${calculation.adjustedBuildDays - calculation.buildTimeLimitDays} days over the limit.` }
+        : { label: `${formatCurrency(BONUS_COMPONENT_AMOUNTS["build-time"])} available`, className: "is-pending", detail: `Enter the dig date and Certificate of Occupancy date. Approved exception days will be deducted automatically.` };
 
     const photoStatus = calculation.finalGradePhotosPass
       ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["final-grade-photos"])}`, className: "is-pass", detail: record.finalGradePhotosVerifiedDate ? `Verified ${formatDate(record.finalGradePhotosVerifiedDate)}.` : "Verified as uploaded to Dropbox." }
@@ -1211,7 +1223,9 @@
     const adjustedBuildDays = grossBuildDays === null ? null : Math.max(0, grossBuildDays - approvedDelayDays);
     const buildTimeLimitDays = getBuildTimeLimitDays(record, settings);
     const buildTimeAvailable = Boolean(record.buildStartDate && record.actualCloseDate && adjustedBuildDays !== null);
-    const buildTimePass = buildTimeAvailable && adjustedBuildDays <= buildTimeLimitDays;
+    const buildTimeCalculatedPass = buildTimeAvailable && adjustedBuildDays <= buildTimeLimitDays;
+    const buildTimeManualPass = Boolean(record.buildTimeManualPass);
+    const buildTimePass = buildTimeCalculatedPass || buildTimeManualPass;
     const targetBuildDays = buildTimeLimitDays;
     const varianceDays = adjustedBuildDays !== null ? adjustedBuildDays - buildTimeLimitDays : null;
 
@@ -1256,7 +1270,15 @@
     const superintendentChecklistPass = Boolean(record.superintendentChecklistComplete);
 
     const resultById = {
-      "build-time": { pass: buildTimePass, touched: buildTimeAvailable, evidence: buildTimeAvailable ? `${adjustedBuildDays} adjusted days` : "Needs dig date and Certificate of Occupancy" },
+      "build-time": {
+        pass: buildTimePass,
+        touched: buildTimeAvailable || buildTimeManualPass,
+        evidence: buildTimeManualPass
+          ? (record.buildTimeManualNote || "Management-approved build-time pass")
+          : buildTimeAvailable
+            ? `${adjustedBuildDays} adjusted days`
+            : "Needs dig date and Certificate of Occupancy"
+      },
       "final-grade-photos": {
         pass: finalGradePhotosPass,
         touched: finalGradePhotosPass,
@@ -1329,6 +1351,8 @@
       criteriaPassed,
       allCriteriaPass,
       buildTimeAvailable,
+      buildTimeCalculatedPass,
+      buildTimeManualPass,
       buildTimePass,
       finalGradePhotosPass,
       punch30Complete,
@@ -2513,6 +2537,8 @@ ${record.approvalNotes ? escapeMarkdown(record.approvalNotes) : "—"}`;
     if (typeof record.superintendentChecklistComplete !== "boolean") record.superintendentChecklistComplete = false;
     if (!record.superintendentChecklistCompletedDate) record.superintendentChecklistCompletedDate = "";
     if (!record.closingDate) record.closingDate = "";
+    if (typeof record.buildTimeManualPass !== "boolean") record.buildTimeManualPass = false;
+    if (!record.buildTimeManualNote) record.buildTimeManualNote = "";
     if (!record.homeType) record.homeType = "Single Family";
     const usesTownhomeLimit = record.homeType === "Townhome" || Number(record.targetBuildDays) === TOWNHOME_BUILD_TIME_LIMIT_DAYS;
     record.homeType = usesTownhomeLimit ? "Townhome" : "Single Family";
