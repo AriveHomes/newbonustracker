@@ -2,7 +2,7 @@
   "use strict";
 
   const APP_ID = "arive-superintendent-bonus";
-  const APP_VERSION = 13;
+  const APP_VERSION = 15;
   const DB_NAME = "arive-superintendent-bonus-db";
   const DB_STORE = "app-state";
   const DB_KEY = "primary";
@@ -46,7 +46,7 @@
     defaultBaseBonus: BASE_BONUS_AMOUNT,
     dayCountMode: "calendar",
     githubRepo: "",
-    googleWebAppUrl: "",
+    googleWebAppUrl: "https://script.google.com/macros/s/AKfycbwmX2UfEvp7CtB-wGixz81t4HncGesJdKifojf83U1RFRjc_7Dk0Eumg9q6T9M8IgcM/exec",
     googleSyncKey: "",
     buildTimeLimitDays: BUILD_TIME_LIMIT_DAYS,
     eligibleSuperintendents: [...ELIGIBLE_SUPERINTENDENTS],
@@ -128,6 +128,10 @@
     cacheReferences();
     bindEvents();
     state = normalizeState(await loadState());
+    settingsDraft = clone(state.settings);
+
+    await loadSharedGoogleRecords({ mergeLocalForMigration: true });
+
     settingsDraft = clone(state.settings);
     renderTracker();
     renderSettings();
@@ -244,7 +248,21 @@
       state.settings.googleWebAppUrl = settingsDraft.googleWebAppUrl;
       state.settings.googleSyncKey = settingsDraft.googleSyncKey;
       await saveNow();
-      await syncAllRecordsToGoogleSheet(true);
+
+      if (remoteSyncTimer) {
+        clearTimeout(remoteSyncTimer);
+        remoteSyncTimer = null;
+      }
+
+      const loaded = await loadSharedGoogleRecords({
+        mergeLocalForMigration: true,
+        showFeedback: true
+      });
+
+      if (loaded) {
+        await syncAllRecordsToGoogleSheet(false);
+        renderTracker();
+      }
     });
     refs.openGoogleSheetButton.addEventListener("click", () => {
       window.open("https://docs.google.com/spreadsheets/d/18MO9BOkJgw98lScOO7MmcA2KUXDcflKw31Quxb7cLwA/edit", "_blank", "noopener,noreferrer");
@@ -637,23 +655,55 @@
     const record = getCurrentRecord();
     if (record) duplicateRecord(record.id);
   }
+  async function deleteGoogleRecord(recordId) {
+    const url = String(state.settings.googleWebAppUrl || "").trim();
+    const key = String(state.settings.googleSyncKey || "").trim();
+
+    if (!url || !key || !recordId) return false;
+
+    try {
+      await fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        cache: "no-store",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "deleteRecord",
+          syncKey: key,
+          recordId
+        })
+      });
+      return true;
+    } catch (error) {
+      console.error("Google shared record delete failed", error);
+      return false;
+    }
+  }
 
   async function deleteRecord(recordId) {
     const record = state.records.find((item) => item.id === recordId);
     if (!record) return;
+
     const label = record.lotNumber || record.address || record.superintendent || "this review";
     const confirmed = await confirmAction(
       "Delete bonus review?",
-      `This permanently removes ${label} from this browser. Export a backup first if you may need it later.`,
+      `This permanently removes ${label} from the shared tracker for everyone. Export a backup first if you may need it later.`,
       "Delete"
     );
     if (!confirmed) return;
 
+    const cloudDeleted = await deleteGoogleRecord(recordId);
     state.records = state.records.filter((item) => item.id !== recordId);
     if (currentRecordId === recordId) currentRecordId = null;
-    await saveNow();
+    await storageSet(state);
+
     renderTracker();
-    showToast("Review deleted.", "success");
+    showToast(
+      cloudDeleted || !state.settings.googleSyncKey
+        ? "Review deleted."
+        : "Review removed locally, but the shared delete could not be confirmed.",
+      cloudDeleted || !state.settings.googleSyncKey ? "success" : "error"
+    );
     showView("tracker");
   }
 
@@ -1504,15 +1554,21 @@
   async function clearAllData() {
     const confirmed = await confirmAction(
       "Clear all bonus records?",
-      "This permanently removes every tracked review and photo from this browser. Export a full backup first.",
+      "This permanently removes every tracked review from the shared tracker for everyone. Export a full backup first.",
       "Clear all"
     );
     if (!confirmed) return;
+
+    const ids = state.records.map((record) => record.id).filter(Boolean);
+    for (const recordId of ids) {
+      await deleteGoogleRecord(recordId);
+    }
+
     state.records = [];
     currentRecordId = null;
-    await saveNow();
+    await storageSet(state);
     renderTracker();
-    showToast("All bonus records cleared.", "success");
+    showToast("All bonus records cleared from the shared tracker.", "success");
   }
 
   function updateProgramLabels() {
@@ -1958,8 +2014,8 @@ ${record.approvalNotes ? escapeMarkdown(record.approvalNotes) : "—"}`;
     if (!refs.googleSyncStatus) return;
     const configured = Boolean((settingsDraft.googleWebAppUrl || state.settings.googleWebAppUrl) && (settingsDraft.googleSyncKey || state.settings.googleSyncKey));
     refs.googleSyncStatus.textContent = message || (configured
-      ? "Configured - saves will also sync 30-day punch-list data to the reminder sheet."
-      : "Not connected yet - paste the Apps Script Web App URL and sync key below.");
+      ? "Connected - this browser loads and saves the shared Google Sheet records."
+      : "Enter the team sync key once on this browser to load the shared tracker.");
     refs.googleSyncStatus.classList.toggle("is-connected", configured);
   }
 
@@ -1996,7 +2052,8 @@ ${record.approvalNotes ? escapeMarkdown(record.approvalNotes) : "—"}`;
       paidDate: record.paidDate || "",
       notes: record.punch30Notes || record.reviewNotes || "",
       reminderStatus: calc.punch30TrackingLabel || "",
-      updatedAt: record.updatedAt || new Date().toISOString()
+      updatedAt: record.updatedAt || new Date().toISOString(),
+      fullRecord: record
     };
   }
 
@@ -2012,7 +2069,7 @@ ${record.approvalNotes ? escapeMarkdown(record.approvalNotes) : "—"}`;
       const payload = {
         action: "syncRecords",
         syncKey: key,
-        source: "Arive Superintendent Bonus Tracker v14",
+        source: "Arive Superintendent Bonus Tracker v15",
         sentAt: new Date().toISOString(),
         records: state.records.map(buildGoogleSyncRecord)
       };
@@ -2034,6 +2091,191 @@ ${record.approvalNotes ? escapeMarkdown(record.approvalNotes) : "—"}`;
       if (showFeedback) showToast("Could not send the Google Sheet sync. Check the Web App URL and network connection.", "error");
       return false;
     }
+  }
+  async function loadSharedGoogleRecords(options = {}) {
+    const {
+      mergeLocalForMigration = false,
+      showFeedback = false
+    } = options;
+
+    const url = String(state.settings.googleWebAppUrl || "").trim();
+    const key = String(state.settings.googleSyncKey || "").trim();
+
+    if (!url || !key) {
+      updateGoogleSyncStatus();
+      return false;
+    }
+
+    try {
+      refs.saveIndicator.textContent = "Loading shared records...";
+      refs.saveIndicator.classList.remove("is-error");
+
+      const remoteRecords = await fetchSharedGoogleRecords(url, key);
+      if (!Array.isArray(remoteRecords)) {
+        throw new Error("Shared record response was invalid.");
+      }
+
+      const localRecords = Array.isArray(state.records) ? state.records : [];
+      const mergeResult = mergeSharedRecords(localRecords, remoteRecords, mergeLocalForMigration);
+
+      state.records = mergeResult.records.map((record) => normalizeRecord(record));
+      await storageSet(state);
+
+      refs.saveIndicator.textContent = "Shared records loaded";
+      refs.saveIndicator.classList.remove("is-error");
+      updateGoogleSyncStatus(`Connected - ${state.records.length} shared review${state.records.length === 1 ? "" : "s"} loaded.`);
+
+      if (mergeResult.needsCloudSeed) {
+        await syncAllRecordsToGoogleSheet(false);
+      }
+
+      if (showFeedback) {
+        showToast(
+          `Loaded ${state.records.length} shared review${state.records.length === 1 ? "" : "s"}.`,
+          "success"
+        );
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Shared Google record load failed", error);
+      refs.saveIndicator.textContent = "Using local backup";
+      refs.saveIndicator.classList.add("is-error");
+      updateGoogleSyncStatus("Shared data could not be loaded - using this browser's cached copy.");
+      if (showFeedback) showToast("Could not load the shared tracker. Using the local backup.", "error");
+      return false;
+    }
+  }
+
+  function mergeSharedRecords(localRecords, remoteRecords, allowMigrationMerge) {
+    const localById = new Map(
+      (localRecords || []).filter((record) => record?.id).map((record) => [String(record.id), record])
+    );
+    const remoteById = new Map(
+      (remoteRecords || []).filter((record) => record?.id).map((record) => [String(record.id), record])
+    );
+
+    const remoteHasFullRecords = [...remoteById.values()].some((record) => !isLegacySharedRecord(record));
+    const migrationMode =
+      allowMigrationMerge &&
+      !remoteHasFullRecords &&
+      (localById.size > 0 || remoteById.size > 0);
+
+    const merged = [];
+    let needsCloudSeed = false;
+
+    remoteById.forEach((remoteRecord, id) => {
+      const localRecord = localById.get(id);
+
+      if (localRecord && isLegacySharedRecord(remoteRecord)) {
+        merged.push(localRecord);
+        needsCloudSeed = true;
+        localById.delete(id);
+        return;
+      }
+
+      if (localRecord && !isLegacySharedRecord(remoteRecord)) {
+        const remoteUpdated = String(remoteRecord.updatedAt || "");
+        const localUpdated = String(localRecord.updatedAt || "");
+
+        if (localUpdated && remoteUpdated && localUpdated > remoteUpdated) {
+          merged.push(localRecord);
+          needsCloudSeed = true;
+        } else {
+          merged.push(remoteRecord);
+        }
+
+        localById.delete(id);
+        return;
+      }
+
+      merged.push(remoteRecord);
+      localById.delete(id);
+    });
+
+    if (migrationMode) {
+      localById.forEach((localRecord) => {
+        merged.push(localRecord);
+        needsCloudSeed = true;
+      });
+    }
+
+    return { records: merged, needsCloudSeed };
+  }
+
+  function isLegacySharedRecord(record) {
+    if (!record || typeof record !== "object") return true;
+    return !(
+      Object.prototype.hasOwnProperty.call(record, "createdAt") &&
+      Object.prototype.hasOwnProperty.call(record, "delays") &&
+      Object.prototype.hasOwnProperty.call(record, "criteriaScores") &&
+      Object.prototype.hasOwnProperty.call(record, "homeType")
+    );
+  }
+
+  function fetchSharedGoogleRecords(url, key) {
+    return new Promise((resolve, reject) => {
+      const callbackName =
+        "__ariveSharedRecords_" +
+        Date.now() +
+        "_" +
+        Math.random().toString(36).slice(2);
+
+      const script = document.createElement("script");
+
+      const cleanup = () => {
+        try {
+          delete window[callbackName];
+        } catch (_) {
+          window[callbackName] = undefined;
+        }
+        if (script.parentNode) script.parentNode.removeChild(script);
+      };
+
+      const timer = setTimeout(() => {
+        cleanup();
+        reject(new Error("Shared record request timed out."));
+      }, 15000);
+
+      window[callbackName] = (response) => {
+        clearTimeout(timer);
+        cleanup();
+
+        if (!response || response.ok !== true) {
+          reject(
+            new Error(
+              response && response.error
+                ? response.error
+                : "Shared record request failed."
+            )
+          );
+          return;
+        }
+
+        resolve(response.records || []);
+      };
+
+      const separator = url.includes("?") ? "&" : "?";
+      script.src =
+        url +
+        separator +
+        "action=getRecords" +
+        "&syncKey=" +
+        encodeURIComponent(key) +
+        "&callback=" +
+        encodeURIComponent(callbackName) +
+        "&_=" +
+        Date.now();
+
+      script.async = true;
+      script.onerror = () => {
+        clearTimeout(timer);
+        cleanup();
+        reject(new Error("Could not reach shared Google records."));
+      };
+
+      document.head.appendChild(script);
+    });
   }
 
   async function loadState() {
@@ -2107,7 +2349,9 @@ ${record.approvalNotes ? escapeMarkdown(record.approvalNotes) : "—"}`;
     settings.defaultBaseBonus = BASE_BONUS_AMOUNT;
     settings.dayCountMode = "calendar";
     settings.githubRepo = typeof raw.githubRepo === "string" ? raw.githubRepo : "";
-    settings.googleWebAppUrl = typeof raw.googleWebAppUrl === "string" ? raw.googleWebAppUrl : "";
+    settings.googleWebAppUrl = typeof raw.googleWebAppUrl === "string" && raw.googleWebAppUrl.trim()
+      ? raw.googleWebAppUrl.trim()
+      : "https://script.google.com/macros/s/AKfycbwmX2UfEvp7CtB-wGixz81t4HncGesJdKifojf83U1RFRjc_7Dk0Eumg9q6T9M8IgcM/exec";
     settings.googleSyncKey = typeof raw.googleSyncKey === "string" ? raw.googleSyncKey : "";
     settings.buildTimeLimitDays = BUILD_TIME_LIMIT_DAYS;
     settings.eligibleSuperintendents = [...ELIGIBLE_SUPERINTENDENTS];
