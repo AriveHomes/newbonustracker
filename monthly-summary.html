@@ -57,6 +57,7 @@
   const DB_NAME='arive-superintendent-bonus-db', DB_STORE='app-state', DB_KEY='primary', LOCAL_STORAGE_KEY='arive-superintendent-bonus-state';
   const GOOGLE_WEB_APP_URL='https://script.google.com/macros/s/AKfycbwmX2UfEvp7CtB-wGixz81t4HncGesJdKifojf83U1RFRjc_7Dk0Eumg9q6T9M8IgcM/exec';
   const BASE=350, SF_LIMIT=150, TH_LIMIT=205;
+  const BONUS={build:175,punch:70,safety:50,photos:35,checklist:20};
   const SUPERS=['Greg Worthington','Jackson Chambers','Burke Nielson','Deryck Copley'];
   let state={records:[],settings:{}}, monthValue='';
   const $=id=>document.getElementById(id);
@@ -147,10 +148,25 @@
 
   function calc(r){
     const limit=(r.homeType==='Townhome'||Number(r.targetBuildDays)===TH_LIMIT)?TH_LIMIT:SF_LIMIT;
-    const gross=countDays(r.buildStartDate,r.actualCloseDate); const delayDays=approvedDelayDays(r,r.actualCloseDate); const adjusted=gross===null?null:Math.max(0,gross-delayDays); const buildPass=adjusted!==null&&adjusted<=limit; const photos=!!r.finalGradePhotosComplete, punch=!!r.punch30Complete, safety=!!r.safetySwpppComplete, checklist=!!r.superintendentChecklistComplete; const criteriaPassed=[buildPass,photos,punch,safety,checklist].filter(Boolean).length, allPass=criteriaPassed===5; let finalBonus=allPass?BASE:0; if(r.manualApprovedBonus!==''&&r.manualApprovedBonus!==null&&r.manualApprovedBonus!==undefined&&!Number.isNaN(Number(r.manualApprovedBonus))) finalBonus=Math.max(0,Number(r.manualApprovedBonus)); return {limit,gross,delayDays,adjusted,buildPass,photos,punch,safety,checklist,criteriaPassed,allPass,finalBonus};
+    const gross=countDays(r.buildStartDate,r.actualCloseDate);
+    const delayDays=approvedDelayDays(r,r.actualCloseDate);
+    const adjusted=gross===null?null:Math.max(0,gross-delayDays);
+    const buildPass=adjusted!==null&&adjusted<=limit;
+    const photos=!!r.finalGradePhotosComplete;
+    const punchDue=r.closingDate?addDays(r.closingDate,30):'';
+    const punchComplete=!!r.punch30Complete;
+    const punch=punchComplete&&(!punchDue||!r.punch30CompletedDate||r.punch30CompletedDate<=punchDue);
+    const safety=!!r.safetySwpppComplete;
+    const checklist=!!r.superintendentChecklistComplete;
+    const criteriaPassed=[buildPass,photos,punch,safety,checklist].filter(Boolean).length;
+    const allPass=criteriaPassed===5;
+    let finalBonus=(buildPass?BONUS.build:0)+(photos?BONUS.photos:0)+(punch?BONUS.punch:0)+(safety?BONUS.safety:0)+(checklist?BONUS.checklist:0);
+    if(r.manualApprovedBonus!==''&&r.manualApprovedBonus!==null&&r.manualApprovedBonus!==undefined&&!Number.isNaN(Number(r.manualApprovedBonus))) finalBonus=Math.max(0,Number(r.manualApprovedBonus));
+    return {limit,gross,delayDays,adjusted,buildPass,photos,punch,safety,checklist,criteriaPassed,allPass,finalBonus};
   }
 
   function approvedDelayDays(r,end){const set=new Set(),start=r.buildStartDate;if(!start||!end)return 0;(r.delays||[]).filter(d=>d.outsideControl&&d.decision==='Approved'&&d.startDate&&d.endDate).forEach(d=>{let a=d.startDate<start?start:d.startDate,b=d.endDate>end?end:d.endDate;for(const k of dates(a,b))set.add(k)});return set.size}
+  function addDays(v,n){const d=parseDate(v);if(!d)return '';d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
   function dates(a,b){const out=[],s=parseDate(a),e=parseDate(b);if(!s||!e||e<s)return out;for(let t=s.getTime();t<=e.getTime();t+=86400000)out.push(new Date(t).toISOString().slice(0,10));return out}
   function countDays(a,b){const s=parseDate(a),e=parseDate(b);if(!s||!e||e<s)return null;return Math.floor((e-s)/86400000)+1}
   function parseDate(v){if(!/^\d{4}-\d{2}-\d{2}$/.test(String(v||'')))return null;const [y,m,d]=v.split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
