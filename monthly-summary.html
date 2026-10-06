@@ -133,7 +133,8 @@
   }
 
   function renderSupers(rows){
-    $('superGrid').innerHTML=SUPERS.map(name=>{const rr=rows.filter(x=>x.record.superintendent===name), n=rr.length, eligible=rr.filter(x=>x.calc.allPass).length, builds=rr.filter(x=>x.calc.adjusted!==null), avg=builds.length?builds.reduce((s,x)=>s+x.calc.adjusted,0)/builds.length:null, on=builds.filter(x=>x.calc.buildPass).length, rate=builds.length?Math.round(on/builds.length*100):0, bonus=rr.reduce((s,x)=>s+x.calc.finalBonus,0);return `<div class="super-card"><div class="super-top"><div><div class="super-name">${esc(name)}</div><span class="home-sub">${n} home${n===1?'':'s'} closed</span></div><div class="super-bonus">${money(bonus)}</div></div><div class="progress"><i style="width:${n?Math.round(eligible/n*100):0}%"></i></div><div class="super-stats"><div class="mini"><b>${eligible}/${n}</b><span>Bonus eligible</span></div><div class="mini"><b>${avg===null?'—':avg.toFixed(1)+'d'}</b><span>Avg build</span></div><div class="mini"><b>${builds.length?rate+'%':'—'}</b><span>On time</span></div></div></div>`}).join('');
+    const names=[...new Set([...SUPERS,...rows.map(x=>String(x.record.superintendent||'').trim()).filter(Boolean)])];
+    $('superGrid').innerHTML=names.map(name=>{const rr=rows.filter(x=>x.record.superintendent===name), n=rr.length, eligible=rr.filter(x=>x.calc.allPass).length, builds=rr.filter(x=>x.calc.adjusted!==null), avg=builds.length?builds.reduce((s,x)=>s+x.calc.adjusted,0)/builds.length:null, on=builds.filter(x=>x.calc.buildPass).length, rate=builds.length?Math.round(on/builds.length*100):0, bonus=rr.reduce((s,x)=>s+x.calc.finalBonus,0);return `<div class="super-card"><div class="super-top"><div><div class="super-name">${esc(name)}</div><span class="home-sub">${n} home${n===1?'':'s'} closed</span></div><div class="super-bonus">${money(bonus)}</div></div><div class="progress"><i style="width:${n?Math.round(eligible/n*100):0}%"></i></div><div class="super-stats"><div class="mini"><b>${eligible}/${n}</b><span>Bonus eligible</span></div><div class="mini"><b>${avg===null?'—':avg.toFixed(1)+'d'}</b><span>Avg build</span></div><div class="mini"><b>${builds.length?rate+'%':'—'}</b><span>On time</span></div></div></div>`}).join('');
   }
 
   function renderRequirements(rows){
@@ -151,7 +152,8 @@
     const gross=countDays(r.buildStartDate,r.actualCloseDate);
     const delayDays=approvedDelayDays(r,r.actualCloseDate);
     const adjusted=gross===null?null:Math.max(0,gross-delayDays);
-    const buildPass=adjusted!==null&&adjusted<=limit;
+    const calculatedBuildPass=adjusted!==null&&adjusted<=limit;
+    const buildPass=calculatedBuildPass||!!r.buildTimeManualPass;
     const photos=!!r.finalGradePhotosComplete;
     const punchDue=r.closingDate?addDays(r.closingDate,30):'';
     const punchComplete=!!r.punch30Complete;
