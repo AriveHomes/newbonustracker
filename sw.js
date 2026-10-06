@@ -1,10 +1,10 @@
-const CACHE_NAME = "arive-bonus-v15";
+const CACHE_NAME = "arive-bonus-v16";
 const APP_ASSETS = [
   "./",
   "./index.html",
   "./monthly-summary.html",
   "./styles.css?v=13",
-  "./app.js?v=15",
+  "./app.js?v=16",
   "./manifest.webmanifest",
   "./assets/arive-logo-dark.webp",
   "./assets/arive-logo-white.webp",
