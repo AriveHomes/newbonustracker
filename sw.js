@@ -1,4 +1,4 @@
-const CACHE_NAME = "arive-bonus-v16";
+const CACHE_NAME = "arive-bonus-v17";
 const APP_ASSETS = [
   "./",
   "./index.html",
