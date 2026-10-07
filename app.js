@@ -163,7 +163,7 @@
         planName: "TH",
         homeType: "Townhome",
         buildStartDate: "2025-10-09",
-        actualCloseDate: "2026-05-20",
+        actualCloseDate: "",
         closingDate: "2026-09-02",
         punch30CompletedDate: "2026-10-02",
         buildTimeManualNote: "Management/user-directed build-time pass for September bonus review; Vistas building assignment shown as Manuel-Robbie on closing forecast."
@@ -176,7 +176,7 @@
         planName: "TH",
         homeType: "Townhome",
         buildStartDate: "2026-02-10",
-        actualCloseDate: "2026-09-08",
+        actualCloseDate: "",
         closingDate: "2026-09-17",
         punch30CompletedDate: "2026-10-06",
         buildTimeManualNote: "Management/user-directed build-time pass for September bonus review."
@@ -189,7 +189,7 @@
         planName: "Julia",
         homeType: "Single Family",
         buildStartDate: "2026-04-21",
-        actualCloseDate: "2026-09-17",
+        actualCloseDate: "",
         closingDate: "2026-09-25",
         punch30CompletedDate: "2026-10-06",
         buildTimeManualNote: "Management/user-directed build-time pass for September bonus review. Forecast assignment: Deryck-Burke."
@@ -202,7 +202,7 @@
         planName: "Alydia",
         homeType: "Single Family",
         buildStartDate: "2026-04-07",
-        actualCloseDate: "2026-09-24",
+        actualCloseDate: "",
         closingDate: "2026-09-25",
         punch30CompletedDate: "2026-10-06",
         buildTimeManualNote: "Management/user-directed build-time pass for September bonus review."
@@ -228,7 +228,7 @@
         planName: "TH",
         homeType: "Townhome",
         buildStartDate: "2026-03-31",
-        actualCloseDate: "2026-09-30",
+        actualCloseDate: "",
         closingDate: "2026-09-30",
         punch30CompletedDate: "2026-10-06",
         buildTimeManualNote: "Management/user-directed build-time pass. Effective build start set to 2026-03-31 restart after Vistas Building 1 fire."
@@ -241,7 +241,7 @@
         planName: "TH",
         homeType: "Townhome",
         buildStartDate: "2026-03-31",
-        actualCloseDate: "2026-09-30",
+        actualCloseDate: "",
         closingDate: "2026-09-30",
         punch30CompletedDate: "2026-10-06",
         buildTimeManualNote: "Management/user-directed build-time pass. Effective build start set to 2026-03-31 restart after Vistas Building 1 fire."
@@ -254,7 +254,7 @@
         planName: "Maya",
         homeType: "Single Family",
         buildStartDate: "2026-05-06",
-        actualCloseDate: "2026-09-28",
+        actualCloseDate: "",
         closingDate: "2026-09-30",
         punch30CompletedDate: "2026-10-06",
         buildTimeManualNote: "September 2026 bonus review: user instructed that all five bonus criteria were met."
