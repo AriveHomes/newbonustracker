@@ -2,7 +2,7 @@
   "use strict";
 
   const APP_ID = "arive-superintendent-bonus";
-  const APP_VERSION = 17;
+  const APP_VERSION = 18;
   const DB_NAME = "arive-superintendent-bonus-db";
   const DB_STORE = "app-state";
   const DB_KEY = "primary";
@@ -139,11 +139,162 @@
 
     await loadSharedGoogleRecords({ mergeLocalForMigration: true });
 
+    const septemberSeeded = ensureSeptember2026BonusRecords();
+    if (septemberSeeded > 0) {
+      await storageSet(state);
+      await syncAllRecordsToGoogleSheet(false);
+    }
+
     settingsDraft = clone(state.settings);
     renderTracker();
     renderSettings();
     updateProgramLabels();
     registerServiceWorker();
+  }
+
+  function ensureSeptember2026BonusRecords() {
+    const existingIds = new Set((state.records || []).map((record) => String(record?.id || "")));
+    const seedRecords = [
+      {
+        id: "review-sep2026-vt06",
+        superintendent: "Manuel-Robbie",
+        community: "Vistas Townhomes (VT)",
+        lotNumber: "VT 06",
+        planName: "TH",
+        homeType: "Townhome",
+        buildStartDate: "2025-10-09",
+        actualCloseDate: "2026-05-20",
+        closingDate: "2026-09-02",
+        punch30CompletedDate: "2026-10-02",
+        buildTimeManualNote: "Management/user-directed build-time pass for September bonus review; Vistas building assignment shown as Manuel-Robbie on closing forecast."
+      },
+      {
+        id: "review-sep2026-ot27",
+        superintendent: "Burke Nielson",
+        community: "Moonlight Townhomes (OT)",
+        lotNumber: "OT 27",
+        planName: "TH",
+        homeType: "Townhome",
+        buildStartDate: "2026-02-10",
+        actualCloseDate: "2026-09-08",
+        closingDate: "2026-09-17",
+        punch30CompletedDate: "2026-10-06",
+        buildTimeManualNote: "Management/user-directed build-time pass for September bonus review."
+      },
+      {
+        id: "review-sep2026-cv335",
+        superintendent: "Deryck Copley",
+        community: "Canyon View Meadows (CV)",
+        lotNumber: "CV 335",
+        planName: "Julia",
+        homeType: "Single Family",
+        buildStartDate: "2026-04-21",
+        actualCloseDate: "2026-09-17",
+        closingDate: "2026-09-25",
+        punch30CompletedDate: "2026-10-06",
+        buildTimeManualNote: "Management/user-directed build-time pass for September bonus review. Forecast assignment: Deryck-Burke."
+      },
+      {
+        id: "review-sep2026-stwh01",
+        superintendent: "Deryck Copley",
+        community: "ST Whiting Homestead (ST WH)",
+        lotNumber: "ST WH 01",
+        planName: "Alydia",
+        homeType: "Single Family",
+        buildStartDate: "2026-04-07",
+        actualCloseDate: "2026-09-24",
+        closingDate: "2026-09-25",
+        punch30CompletedDate: "2026-10-06",
+        buildTimeManualNote: "Management/user-directed build-time pass for September bonus review."
+      },
+      {
+        id: "review-sep2026-md16",
+        superintendent: "Jackson Chambers",
+        community: "Makin Dreams (MD)",
+        lotNumber: "MD 16",
+        planName: "Alydia",
+        homeType: "Single Family",
+        buildStartDate: "2026-04-06",
+        actualCloseDate: "",
+        closingDate: "2026-09-25",
+        punch30CompletedDate: "2026-10-06",
+        buildTimeManualNote: "Management/user-directed build-time pass for September bonus review. Closing forecast lists Robbie/Jackson; CO is blank in the closing forecast."
+      },
+      {
+        id: "review-sep2026-vt04",
+        superintendent: "Deryck Copley",
+        community: "Vistas Townhomes (VT)",
+        lotNumber: "VT 04",
+        planName: "TH",
+        homeType: "Townhome",
+        buildStartDate: "2026-03-31",
+        actualCloseDate: "2026-09-30",
+        closingDate: "2026-09-30",
+        punch30CompletedDate: "2026-10-06",
+        buildTimeManualNote: "Management/user-directed build-time pass. Effective build start set to 2026-03-31 restart after Vistas Building 1 fire."
+      },
+      {
+        id: "review-sep2026-vt01",
+        superintendent: "Deryck Copley",
+        community: "Vistas Townhomes (VT)",
+        lotNumber: "VT 01",
+        planName: "TH",
+        homeType: "Townhome",
+        buildStartDate: "2026-03-31",
+        actualCloseDate: "2026-09-30",
+        closingDate: "2026-09-30",
+        punch30CompletedDate: "2026-10-06",
+        buildTimeManualNote: "Management/user-directed build-time pass. Effective build start set to 2026-03-31 restart after Vistas Building 1 fire."
+      },
+      {
+        id: "review-sep2026-stwh04",
+        superintendent: "Deryck Copley",
+        community: "ST Whiting Homestead (ST WH)",
+        lotNumber: "ST WH 04",
+        planName: "Maya",
+        homeType: "Single Family",
+        buildStartDate: "2026-05-06",
+        actualCloseDate: "2026-09-28",
+        closingDate: "2026-09-30",
+        punch30CompletedDate: "2026-10-06",
+        buildTimeManualNote: "September 2026 bonus review: user instructed that all five bonus criteria were met."
+      }
+    ];
+
+    let added = 0;
+    seedRecords.forEach((seed) => {
+      if (existingIds.has(seed.id)) return;
+      const completionDate = seed.closingDate;
+      const record = normalizeRecord({
+        ...seed,
+        createdAt: "2026-10-06T21:30:00.000Z",
+        updatedAt: "2026-10-07T16:18:00.000Z",
+        status: "Submitted",
+        reviewPeriod: "2026-09",
+        baseBonus: 350,
+        targetBuildDays: seed.homeType === "Townhome" ? 205 : 150,
+        buildTimeManualPass: true,
+        delays: [],
+        finalGradePhotosComplete: true,
+        finalGradePhotosVerifiedDate: completionDate,
+        finalGradePhotosNotes: "Assumed complete per user instruction for September 2026 bonus review.",
+        punch30Complete: true,
+        punch30Notes: "Assumed complete on time per user instruction for September 2026 bonus review.",
+        safetySwpppComplete: true,
+        safetySwpppCompletedDate: completionDate,
+        safetySwpppNotes: "Assumed complete per user instruction for September 2026 bonus review.",
+        superintendentChecklistComplete: true,
+        superintendentChecklistCompletedDate: completionDate,
+        reviewedBy: "Brendan",
+        reviewDate: "2026-10-06",
+        submittedDate: "2026-10-06",
+        reviewNotes: "Loaded from the September 2026 closing forecast. All five bonus criteria marked met per user instruction."
+      });
+      state.records.unshift(record);
+      existingIds.add(seed.id);
+      added += 1;
+    });
+    return added;
   }
 
   function cacheReferences() {
