@@ -262,6 +262,30 @@
     ];
 
     let added = 0;
+
+    (state.records || []).forEach((record) => {
+      if (!seedRecords.some((seed) => seed.id === record.id)) return;
+      record.buildTimeManualPass = false;
+      record.buildTimeManualNote = "";
+      record.finalGradePhotosComplete = false;
+      record.finalGradePhotosVerifiedDate = "";
+      record.finalGradePhotosNotes = "";
+      record.punch30Complete = false;
+      record.punch30CompletedDate = "";
+      record.punch30Notes = "";
+      record.safetySwpppComplete = false;
+      record.safetySwpppCompletedDate = "";
+      record.safetySwpppNotes = "";
+      record.superintendentChecklistComplete = false;
+      record.superintendentChecklistCompletedDate = "";
+      record.reviewedBy = "";
+      record.reviewDate = "";
+      record.submittedDate = "";
+      record.status = "Draft";
+      record.reviewNotes = "Loaded from the September 2026 closing forecast. Bonus criteria have not yet been reviewed.";
+      record.updatedAt = "2026-10-07T16:30:00.000Z";
+    });
+
     seedRecords.forEach((seed) => {
       if (existingIds.has(seed.id)) return;
       const completionDate = seed.closingDate;
@@ -273,22 +297,24 @@
         reviewPeriod: "2026-09",
         baseBonus: 350,
         targetBuildDays: seed.homeType === "Townhome" ? 205 : 150,
-        buildTimeManualPass: true,
+        buildTimeManualPass: false,
+        buildTimeManualNote: "",
         delays: [],
-        finalGradePhotosComplete: true,
-        finalGradePhotosVerifiedDate: completionDate,
-        finalGradePhotosNotes: "Assumed complete per user instruction for September 2026 bonus review.",
-        punch30Complete: true,
-        punch30Notes: "Assumed complete on time per user instruction for September 2026 bonus review.",
-        safetySwpppComplete: true,
-        safetySwpppCompletedDate: completionDate,
-        safetySwpppNotes: "Assumed complete per user instruction for September 2026 bonus review.",
-        superintendentChecklistComplete: true,
-        superintendentChecklistCompletedDate: completionDate,
-        reviewedBy: "Brendan",
-        reviewDate: "2026-10-06",
-        submittedDate: "2026-10-06",
-        reviewNotes: "Loaded from the September 2026 closing forecast. All five bonus criteria marked met per user instruction."
+        finalGradePhotosComplete: false,
+        finalGradePhotosVerifiedDate: "",
+        finalGradePhotosNotes: "",
+        punch30Complete: false,
+        punch30CompletedDate: "",
+        punch30Notes: "",
+        safetySwpppComplete: false,
+        safetySwpppCompletedDate: "",
+        safetySwpppNotes: "",
+        superintendentChecklistComplete: false,
+        superintendentChecklistCompletedDate: "",
+        reviewedBy: "",
+        reviewDate: "",
+        submittedDate: "",
+        reviewNotes: "Loaded from the September 2026 closing forecast. Bonus criteria have not yet been reviewed."
       });
       state.records.unshift(record);
       existingIds.add(seed.id);
