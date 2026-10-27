@@ -2,7 +2,7 @@
   "use strict";
 
   const APP_ID = "arive-superintendent-bonus";
-  const APP_VERSION = 18;
+  const APP_VERSION = 20;
   const DB_NAME = "arive-superintendent-bonus-db";
   const DB_STORE = "app-state";
   const DB_KEY = "primary";
@@ -2509,14 +2509,17 @@ ${record.approvalNotes ? escapeMarkdown(record.approvalNotes) : "—"}`;
           return;
         }
 
-        resolve(response.records || []);
+        const records = Array.isArray(response.records)
+          ? response.records.map((item) => item && item.record ? item.record : item).filter(Boolean)
+          : [];
+        resolve(records);
       };
 
       const separator = url.includes("?") ? "&" : "?";
       script.src =
         url +
         separator +
-        "action=getRecords" +
+        "action=listRecords" +
         "&syncKey=" +
         encodeURIComponent(key) +
         "&callback=" +
