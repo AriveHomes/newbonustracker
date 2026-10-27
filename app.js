@@ -2,7 +2,7 @@
   "use strict";
 
   const APP_ID = "arive-superintendent-bonus";
-  const APP_VERSION = 20;
+  const APP_VERSION = 21;
   const DB_NAME = "arive-superintendent-bonus-db";
   const DB_STORE = "app-state";
   const DB_KEY = "primary";
@@ -263,28 +263,7 @@
 
     let added = 0;
 
-    (state.records || []).forEach((record) => {
-      if (!seedRecords.some((seed) => seed.id === record.id)) return;
-      record.buildTimeManualPass = false;
-      record.buildTimeManualNote = "";
-      record.finalGradePhotosComplete = false;
-      record.finalGradePhotosVerifiedDate = "";
-      record.finalGradePhotosNotes = "";
-      record.punch30Complete = false;
-      record.punch30CompletedDate = "";
-      record.punch30Notes = "";
-      record.safetySwpppComplete = false;
-      record.safetySwpppCompletedDate = "";
-      record.safetySwpppNotes = "";
-      record.superintendentChecklistComplete = false;
-      record.superintendentChecklistCompletedDate = "";
-      record.reviewedBy = "";
-      record.reviewDate = "";
-      record.submittedDate = "";
-      record.status = "Draft";
-      record.reviewNotes = "Loaded from the September 2026 closing forecast. Bonus criteria have not yet been reviewed.";
-      record.updatedAt = "2026-10-07T16:30:00.000Z";
-    });
+    // Existing seeded records are preserved exactly as reviewed. Only missing September records are added.
 
     seedRecords.forEach((seed) => {
       if (existingIds.has(seed.id)) return;
@@ -2609,9 +2588,7 @@ ${record.approvalNotes ? escapeMarkdown(record.approvalNotes) : "—"}`;
     settings.defaultBaseBonus = BASE_BONUS_AMOUNT;
     settings.dayCountMode = "calendar";
     settings.githubRepo = typeof raw.githubRepo === "string" ? raw.githubRepo : "";
-    settings.googleWebAppUrl = typeof raw.googleWebAppUrl === "string" && raw.googleWebAppUrl.trim()
-      ? raw.googleWebAppUrl.trim()
-      : "https://script.google.com/macros/s/AKfycbwmX2UfEvp7CtB-wGixz81t4HncGesJdKifojf83U1RFRjc_7Dk0Eumg9q6T9M8IgcM/exec";
+    settings.googleWebAppUrl = DEFAULT_SETTINGS.googleWebAppUrl;
     settings.googleSyncKey = typeof raw.googleSyncKey === "string" ? raw.googleSyncKey : "";
     settings.buildTimeLimitDays = BUILD_TIME_LIMIT_DAYS;
     settings.eligibleSuperintendents = [...ELIGIBLE_SUPERINTENDENTS];
