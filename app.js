@@ -2,7 +2,7 @@
   "use strict";
 
   const APP_ID = "arive-superintendent-bonus";
-  const APP_VERSION = 22;
+  const APP_VERSION = 23;
   const DB_NAME = "arive-superintendent-bonus-db";
   const DB_STORE = "app-state";
   const DB_KEY = "primary";
@@ -10,9 +10,9 @@
   const BASE_BONUS_AMOUNT = 350;
   const BONUS_COMPONENT_AMOUNTS = Object.freeze({
     "build-time": 175,
-    "punch-30": 70,
+    "punch-30": 52.5,
     "safety-swppp": 20,
-    "final-grade-photos": 35,
+    "final-grade-photos": 52.5,
     "superintendent-checklist": 50
   });
   const BUILD_TIME_LIMIT_DAYS = 150;
