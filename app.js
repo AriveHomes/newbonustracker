@@ -2,7 +2,7 @@
   "use strict";
 
   const APP_ID = "arive-superintendent-bonus";
-  const APP_VERSION = 24;
+  const APP_VERSION = 25;
   const DB_NAME = "arive-superintendent-bonus-db";
   const DB_STORE = "app-state";
   const DB_KEY = "primary";
@@ -1026,7 +1026,7 @@
       startDate: "",
       endDate: "",
       outsideControl: true,
-      decision: "Pending",
+      decision: "Approved",
       approvedBy: "",
       notes: ""
     });
@@ -1071,6 +1071,12 @@
     const input = event.target.closest("[data-delay-id][data-delay-field]");
     if (!input) return;
     updateDelayFromInput(input);
+
+    if (["startDate", "endDate", "outsideControl", "decision"].includes(input.dataset.delayField)) {
+      renderCriteria();
+      renderEditorSummary();
+    }
+
     scheduleSave();
   }
 
@@ -1081,7 +1087,10 @@
     renderDelayTable();
     renderCriteria();
     renderEditorSummary();
-    scheduleSave();
+
+    // Delay changes affect the superintendent's build-time result and bonus,
+    // so save immediately rather than waiting for the normal edit debounce.
+    void saveNow();
   }
 
   function updateDelayFromInput(input) {
@@ -1402,7 +1411,7 @@
       punch30TrackingDetail = record.punch30CompletedDate
         ? punch30Pass
           ? `Completed ${formatDate(record.punch30CompletedDate)} on time.`
-          : `Completed ${formatDate(record.punch30CompletedDate)} after the ${formatDate(punch30DueDate)} deadline; the $70 punch-list bonus was not earned.`
+          : `Completed ${formatDate(record.punch30CompletedDate)} after the ${formatDate(punch30DueDate)} deadline; the ${formatCurrency(BONUS_COMPONENT_AMOUNTS["punch-30"])} punch-list bonus was not earned.`
         : "Marked complete.";
     } else if (punch30DueDate && punch30DaysRemaining !== null) {
       if (punch30DaysRemaining < 0) {
