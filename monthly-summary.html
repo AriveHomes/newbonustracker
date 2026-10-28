@@ -23,6 +23,7 @@
       <a class="btn btn-dark" href="index.html">← Bonus Tracker</a>
       <button class="btn btn-dark" id="copyButton" type="button">Copy Summary</button>
       <button class="btn btn-dark" id="downloadButton" type="button">Download Report</button>
+      <button class="btn btn-soft" id="hrExportButton" type="button">Export HR Payroll</button>
       <button class="btn btn-light" id="printButton" type="button">Print / Save PDF</button>
     </div>
   </div>
@@ -67,6 +68,7 @@
     $('printButton').addEventListener('click',()=>window.print());
     $('copyButton').addEventListener('click',copySummary);
     $('downloadButton').addEventListener('click',downloadReport);
+    $('hrExportButton').addEventListener('click',exportHrPayroll);
     $('monthInput').addEventListener('change',e=>{monthValue=e.target.value;selectedSuper='';render();});
     $('superGrid').addEventListener('click',e=>{const card=e.target.closest('[data-super]');if(card)toggleSuperDrilldown(card.dataset.super);});
     $('superGrid').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const card=e.target.closest('[data-super]');if(!card)return;e.preventDefault();toggleSuperDrilldown(card.dataset.super);});
@@ -312,6 +314,51 @@
   function money(v){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(v)||0)}
   function statusChip(status,allPass){const s=status||'Draft',cls=s==='Paid'||s==='Approved'?'good':s==='Not eligible'?'bad':allPass?'good':'neutral';return `<span class="chip ${cls}">${esc(s)}</span>`}
   function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+
+  function exportHrPayroll(){
+    const rows=currentMonthRows()
+      .filter(({calc:c})=>Number(c.finalBonus||0)>0)
+      .sort((a,b)=>String(a.record.superintendent||'').localeCompare(String(b.record.superintendent||''))||String(a.record.community||'').localeCompare(String(b.record.community||''))||String(a.record.lotNumber||'').localeCompare(String(b.record.lotNumber||'')));
+
+    if(!rows.length){
+      alert('There are no positive bonus payouts in '+formatMonth(monthValue)+'.');
+      return;
+    }
+
+    const csvCell=value=>{
+      const text=String(value??'');
+      return /[",\n]/.test(text)?'"'+text.replace(/"/g,'""')+'"':text;
+    };
+
+    const lines=[
+      ['Payroll Month','Superintendent','Community','Lot','Closing Date','Bonus Amount'],
+      ...rows.map(({record:r,calc:c})=>[
+        formatMonth(monthValue),
+        r.superintendent||'',
+        r.community||'',
+        r.lotNumber||'',
+        r.closingDate||'',
+        Number(c.finalBonus||0).toFixed(2)
+      ]),
+      [],
+      ['','','','TOTAL','',rows.reduce((sum,{calc:c})=>sum+Number(c.finalBonus||0),0).toFixed(2)]
+    ];
+
+    const csv='\ufeff'+lines.map(row=>row.map(csvCell).join(',')).join('\r\n');
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='Arive_HR_Superintendent_Bonuses_'+monthValue+'.csv';
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+
+    const button=$('hrExportButton');
+    if(button){
+      const original=button.textContent;
+      button.textContent='HR File Exported';
+      setTimeout(()=>button.textContent=original,1600);
+    }
+  }
 
   async function copySummary(){const txt=`ARIVE HOMES — ${formatMonth(monthValue).toUpperCase()} SUPERINTENDENT BONUS SUMMARY\n${$('heroCopy').textContent}\n\n${$('mHomes').textContent} homes closed | ${$('mEligible').textContent} bonus eligible | ${$('mOnTime').textContent} on-time build rate | ${$('heroBonus').textContent} recommended bonuses`;try{await navigator.clipboard.writeText(txt);$('copyButton').textContent='Copied';setTimeout(()=>$('copyButton').textContent='Copy Summary',1400)}catch(e){alert(txt)}}
   function downloadReport(){const styles=$('pageStyles').textContent, report=$('reportContent').cloneNode(true);report.querySelectorAll('.screen-only').forEach(n=>n.remove()); const html=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Arive Homes - ${formatMonth(monthValue)} Bonus Summary</title><style>${styles}</style></head><body><div class="shell">${report.innerHTML}</div></body></html>`;const blob=new Blob([html],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Arive_Monthly_Bonus_Summary_${monthValue}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
