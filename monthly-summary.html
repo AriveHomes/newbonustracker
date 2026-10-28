@@ -330,19 +330,41 @@
       return /[",\n]/.test(text)?'"'+text.replace(/"/g,'""')+'"':text;
     };
 
+    const grouped=new Map();
+    rows.forEach(item=>{
+      const name=String(item.record.superintendent||'Unassigned').trim()||'Unassigned';
+      if(!grouped.has(name)) grouped.set(name,[]);
+      grouped.get(name).push(item);
+    });
+
     const lines=[
-      ['Payroll Month','Superintendent','Community','Lot','Closing Date','Bonus Amount'],
-      ...rows.map(({record:r,calc:c})=>[
-        formatMonth(monthValue),
-        r.superintendent||'',
-        r.community||'',
-        r.lotNumber||'',
-        r.closingDate||'',
-        Number(c.finalBonus||0).toFixed(2)
-      ]),
-      [],
-      ['','','','TOTAL','',rows.reduce((sum,{calc:c})=>sum+Number(c.finalBonus||0),0).toFixed(2)]
+      ['ARIVE HOMES - '+formatMonth(monthValue)+' SUPERINTENDENT BONUS PAYROLL'],
+      []
     ];
+
+    let grandTotal=0;
+
+    grouped.forEach((items,name)=>{
+      const superTotal=items.reduce((sum,{calc:c})=>sum+Number(c.finalBonus||0),0);
+      grandTotal+=superTotal;
+
+      lines.push([name.toUpperCase()]);
+      lines.push(['Community','Lot','Closing Date','Bonus Amount']);
+
+      items.forEach(({record:r,calc:c})=>{
+        lines.push([
+          r.community||'',
+          r.lotNumber||'',
+          r.closingDate||'',
+          Number(c.finalBonus||0).toFixed(2)
+        ]);
+      });
+
+      lines.push(['','','SUPERINTENDENT TOTAL',superTotal.toFixed(2)]);
+      lines.push([]);
+    });
+
+    lines.push(['','','GRAND TOTAL',grandTotal.toFixed(2)]);
 
     const csv='\ufeff'+lines.map(row=>row.map(csvCell).join(',')).join('\r\n');
     const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
