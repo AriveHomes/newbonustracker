@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#222629">
-<title>Arive Homes | Monthly Bonus Summary</title>
+<title>Arive Homes | Quarterly Bonus Summary</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <style id="pageStyles">
 :root{--ink:#24272a;--ink2:#42464a;--muted:#73787d;--line:#dce1db;--paper:#fff;--bg:#f4f6f2;--brand:#88c341;--brand-dark:#5f9728;--brand-soft:#edf6e4;--accent:#88c341;--accent2:#edf6e4;--good:#4f8326;--good-bg:#edf6e4;--warn:#a76012;--warn-bg:#fff5e6;--bad:#a33a35;--bad-bg:#fff0ef;--shadow:0 18px 50px rgba(25,31,25,.10)}
@@ -30,27 +30,27 @@
 </header>
 <div class="shell" id="reportContent">
   <div class="report-header">
-    <div><p class="eyebrow">Arive Homes construction operations</p><h1>Monthly Superintendent Bonus Summary</h1><p class="subtitle" id="reportSubtitle">Owner-level performance snapshot</p><div class="cloud-note screen-only" id="cloudNote"></div></div>
-    <div class="period-control screen-only"><label for="monthInput">Report month</label><input type="month" id="monthInput"></div>
+    <div><p class="eyebrow">Arive Homes construction operations</p><h1>Quarterly Superintendent Bonus Summary</h1><p class="subtitle" id="reportSubtitle">Owner-level performance snapshot</p><div class="cloud-note screen-only" id="cloudNote"></div></div>
+    <div class="period-control screen-only"><label for="quarterInput">Report quarter</label><select id="quarterInput"><option value="2026-Q1">2026 Q1</option><option value="2026-Q2">2026 Q2</option><option value="2026-Q3">2026 Q3</option><option value="2026-Q4">2026 Q4</option></select></div>
   </div>
   <section class="hero">
-    <div><h2 id="heroTitle">Monthly performance</h2><p class="hero-copy" id="heroCopy">Loading tracker data...</p></div>
+    <div><h2 id="heroTitle">Quarterly performance</h2><p class="hero-copy" id="heroCopy">Loading tracker data...</p></div>
     <div class="hero-highlight"><span class="big" id="heroBonus">$0</span><span class="label">Earned bonus total</span></div>
   </section>
   <section class="metric-grid">
-    <article class="metric"><span class="metric-label">Homes closed</span><strong class="metric-value" id="mHomes">0</strong><span class="metric-detail">Closing date in selected month</span></article>
-    <article class="metric"><span class="metric-label">Full $350 earned</span><strong class="metric-value" id="mEligible">0</strong><span class="metric-detail">All 5 bonus requirements complete</span></article>
+    <article class="metric"><span class="metric-label">Homes closed</span><strong class="metric-value" id="mHomes">0</strong><span class="metric-detail">Closing date in selected quarter</span></article>
+    <article class="metric"><span class="metric-label">Full $350 earned</span><strong class="metric-value" id="mEligible">0</strong><span class="metric-detail">All 4 bonus requirements complete</span></article>
     <article class="metric"><span class="metric-label">On-time build rate</span><strong class="metric-value" id="mOnTime">—</strong><span class="metric-detail">150 SF / 205 TH limit</span></article>
     <article class="metric"><span class="metric-label">Avg. adjusted build</span><strong class="metric-value" id="mAvg">—</strong><span class="metric-detail">After approved delay days</span></article>
     <article class="metric"><span class="metric-label">Approved delay days</span><strong class="metric-value" id="mDelays">0</strong><span class="metric-detail">Outside-control exceptions</span></article>
     <article class="metric"><span class="metric-label">Paid bonus total</span><strong class="metric-value" id="mPaid">$0</strong><span class="metric-detail">Selected closings marked paid</span></article>
   </section>
   <section class="grid-2">
-    <article class="panel"><div class="panel-head"><div><h3>Superintendent performance</h3><p>Monthly results by eligible superintendent • click a superintendent for the bonus breakdown</p></div></div><div class="panel-body"><div class="super-grid" id="superGrid"></div><div class="super-drilldown hide" id="superDrilldown"></div></div></article>
-    <article class="panel"><div class="panel-head"><div><h3>Requirement completion</h3><p>Pass rate across homes closed this month</p></div></div><div class="panel-body"><div class="req-list" id="reqList"></div></div></article>
+    <article class="panel"><div class="panel-head"><div><h3>Superintendent performance</h3><p>Quarterly results by eligible superintendent • click a superintendent for the bonus breakdown</p></div></div><div class="panel-body"><div class="super-grid" id="superGrid"></div><div class="super-drilldown hide" id="superDrilldown"></div></div></article>
+    <article class="panel"><div class="panel-head"><div><h3>Requirement completion</h3><p>Pass rate across homes closed this quarter</p></div></div><div class="panel-body"><div class="req-list" id="reqList"></div></div></article>
   </section>
-  <article class="panel"><div class="panel-head"><div><h3>Home-level detail</h3><p>Build performance and bonus eligibility for the selected month</p></div><span class="chip neutral" id="rowCountChip">0 homes</span></div><div class="table-wrap"><table class="report-table"><thead><tr><th>Superintendent</th><th>Home</th><th>Type</th><th>Closing date</th><th>Adjusted build</th><th>Requirements</th><th>Bonus</th><th>Status</th></tr></thead><tbody id="detailBody"></tbody></table><div class="empty hide" id="emptyState"><b>No homes closed in this month.</b>Choose another report month, or enter closing dates in the tracker.</div></div></article>
-  <div class="footnote">Monthly reporting is grouped by closing date. Certificate of Occupancy is used only for the build-time calculation. Base bonus: $350. SF target: 150 days. TH target: 205 days. <span class="generated" id="generatedAt"></span></div>
+  <article class="panel"><div class="panel-head"><div><h3>Home-level detail</h3><p>Build performance and bonus eligibility for the selected quarter</p></div><span class="chip neutral" id="rowCountChip">0 homes</span></div><div class="table-wrap"><table class="report-table"><thead><tr><th>Superintendent</th><th>Home</th><th>Type</th><th>Closing date</th><th>Adjusted build</th><th>Requirements</th><th>Bonus</th><th>Status</th></tr></thead><tbody id="detailBody"></tbody></table><div class="empty hide" id="emptyState"><b>No homes closed in this quarter.</b>Choose another report quarter, or enter closing dates in the tracker.</div></div></article>
+  <div class="footnote">Quarterly reporting is grouped by closing date. Certificate of Occupancy is used only for the build-time calculation. Base bonus: $350. SF target: 150 days. TH target: 205 days. <span class="generated" id="generatedAt"></span></div>
 </div>
 <script>
 (() => {
@@ -58,9 +58,9 @@
   const DB_NAME='arive-superintendent-bonus-db', DB_STORE='app-state', DB_KEY='primary', LOCAL_STORAGE_KEY='arive-superintendent-bonus-state';
   const GOOGLE_WEB_APP_URL='https://script.google.com/macros/s/AKfycbwmX2UfEvp7CtB-wGixz81t4HncGesJdKifojf83U1RFRjc_7Dk0Eumg9q6T9M8IgcM/exec';
   const BASE=350, SF_LIMIT=150, TH_LIMIT=205;
-  const BONUS={build:180,punch:50,safety:20,photos:50,checklist:50};
+  const BONUS={build:200,punch:50,photos:50,checklist:50};
   const SUPERS=['Greg Worthington','Jackson Chambers','Burke Nielson','Deryck Copley'];
-  let state={records:[],settings:{}}, monthValue='', selectedSuper='';
+  let state={records:[],settings:{}}, quarterValue='', selectedSuper='';
   const $=id=>document.getElementById(id);
   document.addEventListener('DOMContentLoaded', init);
 
@@ -69,11 +69,11 @@
     $('copyButton').addEventListener('click',copySummary);
     $('downloadButton').addEventListener('click',downloadReport);
     $('hrExportButton').addEventListener('click',exportHrPayroll);
-    $('monthInput').addEventListener('change',e=>{monthValue=e.target.value;selectedSuper='';render();});
+    $('quarterInput').addEventListener('change',e=>{quarterValue=e.target.value;selectedSuper='';render();});
     $('superGrid').addEventListener('click',e=>{const card=e.target.closest('[data-super]');if(card)toggleSuperDrilldown(card.dataset.super);});
     $('superGrid').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const card=e.target.closest('[data-super]');if(!card)return;e.preventDefault();toggleSuperDrilldown(card.dataset.super);});
     $('superDrilldown').addEventListener('click',async e=>{
-      if(e.target.closest('[data-close-super]')){selectedSuper='';renderSupers(currentMonthRows());return}
+      if(e.target.closest('[data-close-super]')){selectedSuper='';renderSupers(currentQuarterRows());return}
       const pill=e.target.closest('[data-criterion-id][data-record-id]');
       if(pill) await toggleBreakdownCriterion(pill.dataset.recordId,pill.dataset.criterionId,pill);
     });
@@ -95,8 +95,8 @@
       $('cloudNote').textContent='Showing this browser’s saved data. Enter the team sync key once in Program Settings to use shared data.';
     }
 
-    monthValue=pickDefaultMonth(state.records||[]);
-    $('monthInput').value=monthValue;
+    quarterValue=pickDefaultQuarter(state.records||[]);
+    $('quarterInput').value=quarterValue;
     render();
   }
 
@@ -123,23 +123,39 @@
     });
   }
 
-  function pickDefaultMonth(records){
-    const months=records.map(r=>String(r.closingDate||'').slice(0,7)).filter(m=>/^\d{4}-\d{2}$/.test(m)).sort();
-    if(months.length)return months[months.length-1];
-    const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  function quarterKeyFromDate(value){
+    const d=parseDate(value);
+    if(!d)return '';
+    const q=Math.floor(d.getUTCMonth()/3)+1;
+    return d.getUTCFullYear()+'-Q'+q;
   }
 
-  function currentMonthRows(){
-    return (state.records||[]).filter(r=>String(r.closingDate||'').startsWith(monthValue)).map(r=>({record:r,calc:calc(r)})).sort((a,b)=>String(a.record.closingDate).localeCompare(String(b.record.closingDate))||String(a.record.superintendent).localeCompare(String(b.record.superintendent)));
+  function pickDefaultQuarter(records){
+    const quarters=records.map(r=>quarterKeyFromDate(r.closingDate)).filter(Boolean).sort();
+    if(quarters.length)return quarters[quarters.length-1];
+    const d=new Date();
+    return d.getFullYear()+'-Q'+(Math.floor(d.getMonth()/3)+1);
+  }
+
+  function currentQuarterRows(){
+    return (state.records||[])
+      .filter(r=>quarterKeyFromDate(r.closingDate)===quarterValue)
+      .map(r=>({record:r,calc:calc(r)}))
+      .sort((a,b)=>String(a.record.closingDate).localeCompare(String(b.record.closingDate))||String(a.record.superintendent).localeCompare(String(b.record.superintendent)));
+  }
+
+  function formatQuarter(v){
+    const m=String(v||'').match(/^(\d{4})-Q([1-4])$/);
+    return m?('Q'+m[2]+' '+m[1]):v;
   }
 
   function render(){
-    const rows=currentMonthRows();
-    const monthName=formatMonth(monthValue), homes=rows.length, eligible=rows.filter(x=>x.calc.allPass).length, onTimeN=rows.filter(x=>x.calc.buildPass).length, buildCount=rows.filter(x=>x.calc.adjusted!==null).length;
+    const rows=currentQuarterRows();
+    const quarterName=formatQuarter(quarterValue), homes=rows.length, eligible=rows.filter(x=>x.calc.allPass).length, onTimeN=rows.filter(x=>x.calc.buildPass).length, buildCount=rows.filter(x=>x.calc.adjusted!==null).length;
     const avg=buildCount?rows.reduce((s,x)=>s+(x.calc.adjusted??0),0)/buildCount:null, delayDays=rows.reduce((s,x)=>s+x.calc.delayDays,0), bonus=rows.reduce((s,x)=>s+x.calc.finalBonus,0), paid=rows.filter(x=>x.record.status==='Paid'||x.record.paidDate).reduce((s,x)=>s+x.calc.finalBonus,0);
-    $('reportSubtitle').textContent=monthName+' • Owner-level performance snapshot'; $('heroTitle').textContent=monthName+' performance'; $('heroBonus').textContent=money(bonus);
+    $('reportSubtitle').textContent=quarterName+' • Owner-level performance snapshot'; $('heroTitle').textContent=quarterName+' performance'; $('heroBonus').textContent=money(bonus);
     const rate=buildCount?Math.round(onTimeN/buildCount*100):0;
-    $('heroCopy').textContent=homes?(buildCount?`${homes} home${homes===1?'':'s'} closed. ${onTimeN} of ${buildCount} with completed build-time data met the applicable target (${rate}%). ${eligible} earned the full $350, with ${money(bonus)} earned across all bonus criteria.`:`${homes} home${homes===1?'':'s'} closed. Build-time results are pending CO dates. ${eligible} earned the full $350, with ${money(bonus)} earned across all bonus criteria.`):`No homes with a closing date are currently recorded for ${monthName}.`;
+    $('heroCopy').textContent=homes?(buildCount?`${homes} home${homes===1?'':'s'} closed. ${onTimeN} of ${buildCount} with completed build-time data met the applicable target (${rate}%). ${eligible} earned the full $350, with ${money(bonus)} earned across all bonus criteria.`:`${homes} home${homes===1?'':'s'} closed. Build-time results are pending CO dates. ${eligible} earned the full $350, with ${money(bonus)} earned across all bonus criteria.`):`No homes with a closing date are currently recorded for ${quarterName}.`;
     $('mHomes').textContent=homes; $('mEligible').textContent=eligible; $('mOnTime').textContent=buildCount?rate+'%':'—'; $('mAvg').textContent=avg===null?'—':avg.toFixed(1)+'d'; $('mDelays').textContent=delayDays; $('mPaid').textContent=money(paid);
     renderSupers(rows); renderRequirements(rows); renderDetail(rows);
     $('generatedAt').textContent='Generated '+new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date());
@@ -153,7 +169,7 @@
 
   function toggleSuperDrilldown(name){
     selectedSuper=selectedSuper===name?'':name;
-    renderSupers(currentMonthRows());
+    renderSupers(currentQuarterRows());
   }
 
   function renderSuperDrilldown(rows){
@@ -162,11 +178,11 @@
     const rr=rows.filter(x=>x.record.superintendent===selectedSuper);
     box.classList.remove('hide');
     if(!rr.length){
-      box.innerHTML=`<div class="super-drill-head"><div><h4>${esc(selectedSuper)}</h4><p>No homes closed in ${esc(formatMonth(monthValue))}.</p></div><button class="super-drill-close" type="button" data-close-super>Close</button></div>`;
+      box.innerHTML=`<div class="super-drill-head"><div><h4>${esc(selectedSuper)}</h4><p>No homes closed in ${esc(formatQuarter(quarterValue))}.</p></div><button class="super-drill-close" type="button" data-close-super>Close</button></div>`;
       return;
     }
     const total=rr.reduce((s,x)=>s+x.calc.finalBonus,0);
-    box.innerHTML=`<div class="super-drill-head"><div><h4>${esc(selectedSuper)} • ${money(total)} earned</h4><p>${rr.length} home${rr.length===1?'':'s'} closed in ${esc(formatMonth(monthValue))}. Tap Final Grade, 30-Day List, SWPPP, or Checklist to mark it done/not done. Green = earned, red = missed. Build Time stays automatic.</p></div><button class="super-drill-close" type="button" data-close-super>Close</button></div><div class="super-home-list">${rr.map(({record:r,calc:c})=>superHomeBreakdown(r,c)).join('')}</div>`;
+    box.innerHTML=`<div class="super-drill-head"><div><h4>${esc(selectedSuper)} • ${money(total)} earned</h4><p>${rr.length} home${rr.length===1?'':'s'} closed in ${esc(formatQuarter(quarterValue))}. Tap Final Grade, 30-Day List, or Checklist to mark it done/not done. Green = earned, red = missed. Build Time stays automatic.</p></div><button class="super-drill-close" type="button" data-close-super>Close</button></div><div class="super-home-list">${rr.map(({record:r,calc:c})=>superHomeBreakdown(r,c)).join('')}</div>`;
   }
 
   function superHomeBreakdown(r,c){
@@ -176,7 +192,6 @@
       {id:'build-time',label:'Build time',state:buildState,earned:c.buildPass?BONUS.build:0,interactive:false},
       {id:'final-grade-photos',label:'Final grade',state:c.photos?'pass':'fail',earned:c.photos?BONUS.photos:0,interactive:true},
       {id:'punch-30',label:'30-day list',state:c.punch?'pass':'fail',earned:c.punch?BONUS.punch:0,interactive:true},
-      {id:'safety-swppp',label:'SWPPP',state:c.safety?'pass':'fail',earned:c.safety?BONUS.safety:0,interactive:true},
       {id:'superintendent-checklist',label:'Checklist',state:c.checklist?'pass':'fail',earned:c.checklist?BONUS.checklist:0,interactive:true}
     ];
     const pill=item=>{
@@ -200,9 +215,7 @@
       nextPass=!before.punch;
       record.punch30Complete=nextPass;
       if(!nextPass) record.punch30CompletedDate='';
-    }else if(criterionId==='safety-swppp'){
-      nextPass=!before.safety;
-      record.safetySwpppComplete=nextPass;
+
     }else if(criterionId==='superintendent-checklist'){
       nextPass=!before.checklist;
       record.superintendentChecklistComplete=nextPass;
@@ -275,13 +288,13 @@
   }
 
   function renderRequirements(rows){
-    const reqs=[['Build time','buildPass'],['Final grade photos','photos'],['30-day punch list','punch'],['Safety / SWPPP','safety'],['End of Build Checklist','checklist']];
+    const reqs=[['Build time','buildPass'],['Final grade photos','photos'],['30-day punch list','punch'],['End of Build Checklist','checklist']];
     $('reqList').innerHTML=reqs.map(([label,key])=>{const passed=rows.filter(x=>x.calc[key]).length,pct=rows.length?Math.round(passed/rows.length*100):0;return `<div class="req-row"><div><div class="req-label">${label}</div><div class="req-bar"><i style="width:${pct}%"></i></div></div><div class="req-pct">${rows.length?pct+'%':'—'}</div></div>`}).join('');
   }
 
   function renderDetail(rows){
     $('rowCountChip').textContent=`${rows.length} home${rows.length===1?'':'s'}`; $('emptyState').classList.toggle('hide',rows.length!==0);
-    $('detailBody').innerHTML=rows.map(({record:r,calc:c})=>{const lot=[r.community,r.lotNumber].filter(Boolean).join(' • ')||r.address||'Unlabeled home', sub=r.address&&lot!==r.address?r.address:''; const build=c.adjusted===null?'—':`${c.adjusted} / ${c.limit}d`; const buildCls=c.adjusted===null?'neutral':c.buildPass?'good':'bad'; const reqCls=c.allPass?'good':c.criteriaPassed>=3?'warn':'bad'; const bonusCls=c.finalBonus>0?'good':'neutral';return `<tr><td><strong>${esc(r.superintendent||'—')}</strong></td><td><span class="home-title">${esc(lot)}</span>${sub?`<span class="home-sub">${esc(sub)}</span>`:''}</td><td>${esc(r.homeType==='Townhome'?'Townhome':'Single Family')}</td><td>${dateFmt(r.closingDate)}</td><td><span class="chip ${buildCls}">${build}</span>${c.delayDays?`<span class="home-sub">${c.delayDays} approved delay day${c.delayDays===1?'':'s'}</span>`:''}</td><td><span class="chip ${reqCls}">${c.criteriaPassed}/5</span></td><td><span class="chip ${bonusCls}">${money(c.finalBonus)}</span></td><td>${statusChip(r.status,c.allPass)}</td></tr>`}).join('');
+    $('detailBody').innerHTML=rows.map(({record:r,calc:c})=>{const lot=[r.community,r.lotNumber].filter(Boolean).join(' • ')||r.address||'Unlabeled home', sub=r.address&&lot!==r.address?r.address:''; const build=c.adjusted===null?'—':`${c.adjusted} / ${c.limit}d`; const buildCls=c.adjusted===null?'neutral':c.buildPass?'good':'bad'; const reqCls=c.allPass?'good':c.criteriaPassed>=3?'warn':'bad'; const bonusCls=c.finalBonus>0?'good':'neutral';return `<tr><td><strong>${esc(r.superintendent||'—')}</strong></td><td><span class="home-title">${esc(lot)}</span>${sub?`<span class="home-sub">${esc(sub)}</span>`:''}</td><td>${esc(r.homeType==='Townhome'?'Townhome':'Single Family')}</td><td>${dateFmt(r.closingDate)}</td><td><span class="chip ${buildCls}">${build}</span>${c.delayDays?`<span class="home-sub">${c.delayDays} approved delay day${c.delayDays===1?'':'s'}</span>`:''}</td><td><span class="chip ${reqCls}">${c.criteriaPassed}/4</span></td><td><span class="chip ${bonusCls}">${money(c.finalBonus)}</span></td><td>${statusChip(r.status,c.allPass)}</td></tr>`}).join('');
   }
 
   function calc(r){
@@ -295,13 +308,12 @@
     const punchDue=r.closingDate?addDays(r.closingDate,30):'';
     const punchComplete=!!r.punch30Complete;
     const punch=punchComplete&&(!punchDue||!r.punch30CompletedDate||r.punch30CompletedDate<=punchDue);
-    const safety=!!r.safetySwpppComplete;
     const checklist=!!r.superintendentChecklistComplete;
-    const criteriaPassed=[buildPass,photos,punch,safety,checklist].filter(Boolean).length;
-    const allPass=criteriaPassed===5;
-    let finalBonus=(buildPass?BONUS.build:0)+(photos?BONUS.photos:0)+(punch?BONUS.punch:0)+(safety?BONUS.safety:0)+(checklist?BONUS.checklist:0);
+    const criteriaPassed=[buildPass,photos,punch,checklist].filter(Boolean).length;
+    const allPass=criteriaPassed===4;
+    let finalBonus=(buildPass?BONUS.build:0)+(photos?BONUS.photos:0)+(punch?BONUS.punch:0)+(checklist?BONUS.checklist:0);
     if(r.manualApprovedBonus!==''&&r.manualApprovedBonus!==null&&r.manualApprovedBonus!==undefined&&!Number.isNaN(Number(r.manualApprovedBonus))) finalBonus=Math.max(0,Number(r.manualApprovedBonus));
-    return {limit,gross,delayDays,adjusted,buildPass,photos,punch,safety,checklist,criteriaPassed,allPass,finalBonus};
+    return {limit,gross,delayDays,adjusted,buildPass,photos,punch,checklist,criteriaPassed,allPass,finalBonus};
   }
 
   function approvedDelayDays(r,end){const set=new Set(),start=r.buildStartDate;if(!start||!end)return 0;(r.delays||[]).filter(d=>d.outsideControl&&d.decision==='Approved'&&d.startDate&&d.endDate).forEach(d=>{let a=d.startDate<start?start:d.startDate,b=d.endDate>end?end:d.endDate;for(const k of dates(a,b))set.add(k)});return set.size}
@@ -309,19 +321,19 @@
   function dates(a,b){const out=[],s=parseDate(a),e=parseDate(b);if(!s||!e||e<s)return out;for(let t=s.getTime();t<=e.getTime();t+=86400000)out.push(new Date(t).toISOString().slice(0,10));return out}
   function countDays(a,b){const s=parseDate(a),e=parseDate(b);if(!s||!e||e<s)return null;return Math.floor((e-s)/86400000)+1}
   function parseDate(v){if(!/^\d{4}-\d{2}-\d{2}$/.test(String(v||'')))return null;const [y,m,d]=v.split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
-  function formatMonth(v){if(!/^\d{4}-\d{2}$/.test(v))return v;const [y,m]=v.split('-').map(Number);return new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(y,m-1,1)))}
+  function formatQuarter(v){if(!/^\d{4}-\d{2}$/.test(v))return v;const [y,m]=v.split('-').map(Number);return new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(y,m-1,1)))}
   function dateFmt(v){const d=parseDate(v);return d?new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',timeZone:'UTC'}).format(d):'—'}
   function money(v){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(v)||0)}
   function statusChip(status,allPass){const s=status||'Draft',cls=s==='Paid'||s==='Approved'?'good':s==='Not eligible'?'bad':allPass?'good':'neutral';return `<span class="chip ${cls}">${esc(s)}</span>`}
   function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 
   function exportHrPayroll(){
-    const rows=currentMonthRows()
+    const rows=currentQuarterRows()
       .filter(({calc:c})=>Number(c.finalBonus||0)>0)
       .sort((a,b)=>String(a.record.superintendent||'').localeCompare(String(b.record.superintendent||''))||String(a.record.community||'').localeCompare(String(b.record.community||''))||String(a.record.lotNumber||'').localeCompare(String(b.record.lotNumber||'')));
 
     if(!rows.length){
-      alert('There are no positive bonus payouts in '+formatMonth(monthValue)+'.');
+      alert('There are no positive bonus payouts in '+formatQuarter(quarterValue)+'.');
       return;
     }
 
@@ -338,7 +350,7 @@
     });
 
     const lines=[
-      ['ARIVE HOMES - '+formatMonth(monthValue)+' SUPERINTENDENT BONUS PAYROLL'],
+      ['ARIVE HOMES - '+formatQuarter(quarterValue)+' SUPERINTENDENT BONUS PAYROLL'],
       []
     ];
 
@@ -370,7 +382,7 @@
     const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);
-    a.download='Arive_HR_Superintendent_Bonuses_'+monthValue+'.csv';
+    a.download='Arive_HR_Superintendent_Bonuses_'+quarterValue+'.csv';
     a.click();
     setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 
@@ -382,8 +394,8 @@
     }
   }
 
-  async function copySummary(){const txt=`ARIVE HOMES — ${formatMonth(monthValue).toUpperCase()} SUPERINTENDENT BONUS SUMMARY\n${$('heroCopy').textContent}\n\n${$('mHomes').textContent} homes closed | ${$('mEligible').textContent} bonus eligible | ${$('mOnTime').textContent} on-time build rate | ${$('heroBonus').textContent} recommended bonuses`;try{await navigator.clipboard.writeText(txt);$('copyButton').textContent='Copied';setTimeout(()=>$('copyButton').textContent='Copy Summary',1400)}catch(e){alert(txt)}}
-  function downloadReport(){const styles=$('pageStyles').textContent, report=$('reportContent').cloneNode(true);report.querySelectorAll('.screen-only').forEach(n=>n.remove()); const html=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Arive Homes - ${formatMonth(monthValue)} Bonus Summary</title><style>${styles}</style></head><body><div class="shell">${report.innerHTML}</div></body></html>`;const blob=new Blob([html],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Arive_Monthly_Bonus_Summary_${monthValue}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+  async function copySummary(){const txt=`ARIVE HOMES — ${formatQuarter(quarterValue).toUpperCase()} SUPERINTENDENT BONUS SUMMARY\n${$('heroCopy').textContent}\n\n${$('mHomes').textContent} homes closed | ${$('mEligible').textContent} bonus eligible | ${$('mOnTime').textContent} on-time build rate | ${$('heroBonus').textContent} recommended bonuses`;try{await navigator.clipboard.writeText(txt);$('copyButton').textContent='Copied';setTimeout(()=>$('copyButton').textContent='Copy Summary',1400)}catch(e){alert(txt)}}
+  function downloadReport(){const styles=$('pageStyles').textContent, report=$('reportContent').cloneNode(true);report.querySelectorAll('.screen-only').forEach(n=>n.remove()); const html=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Arive Homes - ${formatQuarter(quarterValue)} Bonus Summary</title><style>${styles}</style></head><body><div class="shell">${report.innerHTML}</div></body></html>`;const blob=new Blob([html],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Arive_Quarterly_Bonus_Summary_${quarterValue}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 })();
 </script>
 </body>
