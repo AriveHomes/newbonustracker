@@ -1325,7 +1325,6 @@
       { complete: calculation.buildTimePass, label: calculation.buildTimePass ? `Adjusted build time is ${calculation.buildTimeLimitDays} days or less` : calculation.buildTimeAvailable ? `Adjusted build time exceeds ${calculation.buildTimeLimitDays} days` : "Build-time eligibility is not yet available" },
       { complete: calculation.finalGradePhotosPass, label: calculation.finalGradePhotosPass ? "Final-grade photos verified in Dropbox" : "Confirm final-grade photos are uploaded to Dropbox" },
       { complete: calculation.punch30Pass, label: calculation.punch30Pass ? "30-day punch list is complete" : calculation.punch30DueDate ? `30-day punch list ${calculation.punch30TrackingDetail.toLowerCase()}` : "Enter the closing date to calculate the 30-day punch deadline" },
-      { complete: calculation.safetySwpppPass, label: calculation.safetySwpppPass ? "Safety / SWPPP inspections are complete" : "Complete the safety / SWPPP inspections" },
       { complete: calculation.superintendentChecklistPass, label: calculation.superintendentChecklistPass ? "End of build checklist is complete" : "Confirm the End of Build Checklist is complete" },
       { complete: approvalComplete, label: approvalComplete ? "Approval signoff is complete or not yet required" : "Add approver and approval date" }
     ];
