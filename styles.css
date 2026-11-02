@@ -2570,3 +2570,15 @@ input[type="checkbox"] {
 .reminder-actions { margin-top: 18px; }
 .reminder-rule-grid { margin-top: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 760px) { .reminder-rule-grid { grid-template-columns: 1fr; } }
+
+
+/* Make room for two build-time averages without changing the dashboard design. */
+.metric-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.metric-card-build-split { grid-column: span 2; }
+.metric-card-build-split .metric-build-split { gap: 18px; }
+.metric-card-build-split .metric-build-type + .metric-build-type { padding-left: 18px; }
+.metric-card-build-split .metric-build-type-value { font-size: clamp(1.3rem, 1.7vw, 1.7rem); letter-spacing: -0.035em; }
+@media (max-width: 1320px) { .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1030px) { .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) { .metric-grid { grid-template-columns: 1fr; } .metric-card-build-split { grid-column: auto; } }
+@media (max-width: 440px) { .metric-card-build-split .metric-build-split { grid-template-columns: 1fr; gap: 12px; } .metric-card-build-split .metric-build-type + .metric-build-type { padding: 12px 0 0; border-left: 0; border-top: 1px solid var(--line); } }
