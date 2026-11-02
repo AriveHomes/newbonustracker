@@ -1,10 +1,10 @@
-const CACHE_NAME = "arive-bonus-v30";
+const CACHE_NAME = "arive-bonus-v31";
 const APP_ASSETS = [
   "./",
   "./index.html",
   "./monthly-summary.html",
   "./styles.css?v=13",
-  "./app.js?v=26",
+  "./app.js?v=27",
   "./manifest.webmanifest",
   "./assets/arive-logo-dark.webp",
   "./assets/arive-logo-white.webp",
@@ -27,7 +27,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: "no-store" })
       .then((response) => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
