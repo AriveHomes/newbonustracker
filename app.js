@@ -2,7 +2,7 @@
   "use strict";
 
   const APP_ID = "arive-superintendent-bonus";
-  const APP_VERSION = 27;
+  const APP_VERSION = 28;
   const DB_NAME = "arive-superintendent-bonus-db";
   const DB_STORE = "app-state";
   const DB_KEY = "primary";
@@ -139,6 +139,18 @@
     renderTracker();
     renderSettings();
     updateProgramLabels();
+
+    // Open a selected quarterly-summary home once shared records have loaded.
+    const editId = new URLSearchParams(window.location.search).get("edit");
+    if (editId) {
+      const matchingRecord = state.records.find((record) => String(record.id) === editId);
+      if (matchingRecord) {
+        editRecord(matchingRecord.id);
+      } else {
+        showToast("That home could not be found in the current tracker data.", "error");
+      }
+    }
+
     registerServiceWorker();
   }
 
@@ -930,7 +942,7 @@
   function updateEditorHeading(record) {
     const identity = formatRecordIdentity(record);
     refs.editorTitle.textContent = identity || "New Superintendent Bonus Review";
-    refs.editorDescription.textContent = record.address || "Enter the home details, verify the five bonus requirements, and document any delays outside the superintendent’s control.";
+    refs.editorDescription.textContent = [record.community, record.lotNumber ? `Lot ${record.lotNumber}` : ""].filter(Boolean).join(" • ") || "Enter the home details, verify bonus requirements, and document approved delays.";
   }
 
   function applyBuildTimeGoal(record, requestedDays) {
@@ -1311,14 +1323,14 @@
   }
 
   function getReadiness(record, calculation = getRecordCalculations(record)) {
-    const hasIdentity = Boolean(record.superintendent && record.lotNumber && record.address);
+    const hasIdentity = Boolean(record.superintendent && record.lotNumber);
     const hasDates = Boolean(record.buildStartDate && record.actualCloseDate);
     const hasClosingDate = Boolean(record.closingDate);
     const pendingDelays = record.delays.filter((delay) => delay.decision === "Pending").length;
     const approvalComplete = !["Approved", "Paid"].includes(record.status) || Boolean(record.approvedBy && record.approvedDate);
 
     return [
-      { complete: hasIdentity, label: hasIdentity ? "Superintendent, lot, and address entered" : "Enter superintendent, lot, and address" },
+      { complete: hasIdentity, label: hasIdentity ? "Superintendent and lot entered" : "Enter superintendent and lot number" },
       { complete: hasDates, label: hasDates ? "Dig date and Certificate of Occupancy are entered" : "Enter the dig date and Certificate of Occupancy date" },
       { complete: hasClosingDate, label: hasClosingDate ? "Closing date is entered" : "Enter the closing date for the 30-day punch deadline" },
       { complete: pendingDelays === 0, label: pendingDelays === 0 ? "No pending delay decisions" : `${pendingDelays} delay exception${pendingDelays === 1 ? "" : "s"} still pending` },
