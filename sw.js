@@ -1,15 +1,15 @@
-const CACHE_NAME = "arive-bonus-v31";
+const CACHE_NAME = "arive-bonus-v32";
 const APP_ASSETS = [
   "./",
   "./index.html",
   "./monthly-summary.html",
-  "./styles.css?v=13",
-  "./app.js?v=27",
+  "./styles.css?v=14",
+  "./app.js?v=28",
   "./manifest.webmanifest",
-  "./assets/arive-logo-dark.webp",
-  "./assets/arive-logo-white.webp",
-  "./assets/arive-logo.png",
-  "./assets/favicon.svg"
+  "./arive-logo-dark.webp",
+  "./arive-logo-white.webp",
+  "./arive-logo.png",
+  "./favicon.svg"
 ];
 
 self.addEventListener("install", (event) => {
