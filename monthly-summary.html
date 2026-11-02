@@ -31,7 +31,7 @@
 <div class="shell" id="reportContent">
   <div class="report-header">
     <div><p class="eyebrow">Arive Homes construction operations</p><h1>Quarterly Superintendent Bonus Summary</h1><p class="subtitle" id="reportSubtitle">Owner-level performance snapshot</p><div class="cloud-note screen-only" id="cloudNote"></div></div>
-    <div class="period-control screen-only"><label for="quarterInput">Report quarter</label><select id="quarterInput"><option value="2026-Q1">2026 Q1</option><option value="2026-Q2">2026 Q2</option><option value="2026-Q3">2026 Q3</option><option value="2026-Q4">2026 Q4</option></select></div>
+    <div class="period-control screen-only"><label for="quarterInput">Report quarter</label><select id="quarterInput"></select></div>
   </div>
   <section class="hero">
     <div><h2 id="heroTitle">Quarterly performance</h2><p class="hero-copy" id="heroCopy">Loading tracker data...</p></div>
@@ -96,6 +96,7 @@
     }
 
     quarterValue=pickDefaultQuarter(state.records||[]);
+    populateQuarterOptions(state.records||[]);
     $('quarterInput').value=quarterValue;
     render();
   }
@@ -135,6 +136,20 @@
     if(quarters.length)return quarters[quarters.length-1];
     const d=new Date();
     return d.getFullYear()+'-Q'+(Math.floor(d.getMonth()/3)+1);
+  }
+
+  function populateQuarterOptions(records){
+    const years=new Set(records.map(r=>String(r.closingDate||'').slice(0,4)).filter(y=>/^\d{4}$/.test(y)));
+    years.add(String(new Date().getFullYear()));
+    const options=[...years].sort().flatMap(year=>[1,2,3,4].map(q=>year+'-Q'+q));
+    const select=$('quarterInput');
+    select.innerHTML=options.map(value=>`<option value="${value}">${formatQuarter(value)}</option>`).join('');
+    if(!options.includes(quarterValue)){
+      const option=document.createElement('option');
+      option.value=quarterValue;
+      option.textContent=formatQuarter(quarterValue);
+      select.appendChild(option);
+    }
   }
 
   function currentQuarterRows(){
@@ -265,7 +280,7 @@
     const payload={
       action:'syncRecords',
       syncKey:key,
-      source:'Monthly bonus summary',
+      source:'Quarterly bonus summary',
       records:[{
         id:record.id,
         fullRecord:record,
@@ -321,7 +336,6 @@
   function dates(a,b){const out=[],s=parseDate(a),e=parseDate(b);if(!s||!e||e<s)return out;for(let t=s.getTime();t<=e.getTime();t+=86400000)out.push(new Date(t).toISOString().slice(0,10));return out}
   function countDays(a,b){const s=parseDate(a),e=parseDate(b);if(!s||!e||e<s)return null;return Math.floor((e-s)/86400000)+1}
   function parseDate(v){if(!/^\d{4}-\d{2}-\d{2}$/.test(String(v||'')))return null;const [y,m,d]=v.split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
-  function formatQuarter(v){if(!/^\d{4}-\d{2}$/.test(v))return v;const [y,m]=v.split('-').map(Number);return new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(y,m-1,1)))}
   function dateFmt(v){const d=parseDate(v);return d?new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',timeZone:'UTC'}).format(d):'—'}
   function money(v){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(v)||0)}
   function statusChip(status,allPass){const s=status||'Draft',cls=s==='Paid'||s==='Approved'?'good':s==='Not eligible'?'bad':allPass?'good':'neutral';return `<span class="chip ${cls}">${esc(s)}</span>`}
