@@ -2,16 +2,15 @@
   "use strict";
 
   const APP_ID = "arive-superintendent-bonus";
-  const APP_VERSION = 25;
+  const APP_VERSION = 26;
   const DB_NAME = "arive-superintendent-bonus-db";
   const DB_STORE = "app-state";
   const DB_KEY = "primary";
   const LOCAL_STORAGE_KEY = "arive-superintendent-bonus-state";
   const BASE_BONUS_AMOUNT = 350;
   const BONUS_COMPONENT_AMOUNTS = Object.freeze({
-    "build-time": 180,
+    "build-time": 200,
     "punch-30": 50,
-    "safety-swppp": 20,
     "final-grade-photos": 50,
     "superintendent-checklist": 50
   });
@@ -61,7 +60,7 @@
       {
         id: "build-time",
         name: "Build Time",
-        weight: 20,
+        weight: 25,
         guidance: "Adjusted build time must be 150 calendar days or less for single-family homes or 205 calendar days or less for townhomes after approved outside-control delay days are deducted.",
         autoType: "buildTime",
         required: true,
@@ -70,7 +69,7 @@
       {
         id: "final-grade-photos",
         name: "Final Grade Photos",
-        weight: 20,
+        weight: 25,
         guidance: "Final-grade photos must be uploaded to Dropbox and verified in the review.",
         autoType: "verification",
         required: true,
@@ -79,17 +78,8 @@
       {
         id: "punch-30",
         name: "30-Day Punch List",
-        weight: 20,
+        weight: 25,
         guidance: "All 30-day punch list items must be complete before the bonus is eligible for approval.",
-        autoType: "manualPass",
-        required: true,
-        autoSchedule: false
-      },
-      {
-        id: "safety-swppp",
-        name: "Safety / SWPPP Inspections",
-        weight: 20,
-        guidance: "Required safety and SWPPP inspections must be completed and documented.",
         autoType: "manualPass",
         required: true,
         autoSchedule: false
@@ -97,7 +87,7 @@
       {
         id: "superintendent-checklist",
         name: "End of Build Checklist",
-        weight: 20,
+        weight: 25,
         guidance: "The required End of Build Checklist must be completed and its completion date recorded before the bonus is eligible for approval.",
         autoType: "manualPass",
         required: true,
@@ -757,7 +747,7 @@
     const adjustedBuild = calculation.adjustedBuildDays === null
       ? "—"
       : `${calculation.adjustedBuildDays} days${record.actualCloseDate ? "" : " to date"}`;
-    const score = `${calculation.criteriaPassed}/5`;
+    const score = `${calculation.criteriaPassed}/4`;
     const punchDue = calculation.punch30DueDate ? formatDate(calculation.punch30DueDate) : "—";
     const punchLabel = calculation.punch30TrackingLabel;
 
@@ -986,7 +976,6 @@
     const completionDateFields = {
       finalGradePhotosComplete: "finalGradePhotosVerifiedDate",
       punch30Complete: "punch30CompletedDate",
-      safetySwpppComplete: "safetySwpppCompletedDate",
       superintendentChecklistComplete: "superintendentChecklistCompletedDate"
     };
     if (field in completionDateFields) {
@@ -1002,7 +991,7 @@
       updateEditorHeading(record);
     }
 
-    if (["homeType", "targetBuildDays", "buildStartDate", "actualCloseDate", "closingDate", "finalGradePhotosComplete", "finalGradePhotosVerifiedDate", "punch30Complete", "punch30CompletedDate", "safetySwpppComplete", "safetySwpppCompletedDate", "superintendentChecklistComplete", "superintendentChecklistCompletedDate"].includes(field)) {
+    if (["homeType", "targetBuildDays", "buildStartDate", "actualCloseDate", "closingDate", "finalGradePhotosComplete", "finalGradePhotosVerifiedDate", "punch30Complete", "punch30CompletedDate", "superintendentChecklistComplete", "superintendentChecklistCompletedDate"].includes(field)) {
       renderCriteria();
     }
 
@@ -1133,7 +1122,7 @@
         ? calculation.buildTimePass
           ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["build-time"])}`, className: "is-pass", detail: `${calculation.adjustedBuildDays} adjusted days — within the ${calculation.buildTimeLimitDays}-day limit.` }
           : { label: "Not eligible • $0", className: "is-fail", detail: `${calculation.adjustedBuildDays} adjusted days — ${calculation.adjustedBuildDays - calculation.buildTimeLimitDays} days over the limit.` }
-        : { label: `${formatCurrency(BONUS_COMPONENT_AMOUNTS["build-time"])} available`, className: "is-pending", detail: `Enter the dig date and Certificate of Occupancy date. Approved exception days will be deducted automatically.` };
+        : { label: `${formatCurrency(BONUS_COMPONENT_AMOUNTS["build-time"])} available`, className: "is-pending", detail: "Enter the dig date and Certificate of Occupancy date. Approved exception days will be deducted automatically." };
 
     const photoStatus = calculation.finalGradePhotosPass
       ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["final-grade-photos"])}`, className: "is-pass", detail: record.finalGradePhotosVerifiedDate ? `Verified ${formatDate(record.finalGradePhotosVerifiedDate)}.` : "Verified as uploaded to Dropbox." }
@@ -1146,10 +1135,6 @@
       : calculation.punch30TrackingStatus === "overdue"
         ? { label: "Overdue • $0", className: "is-fail", detail: calculation.punch30TrackingDetail }
         : { label: `${calculation.punch30TrackingStatus === "due-soon" ? "Due soon" : "Open"} • ${formatCurrency(BONUS_COMPONENT_AMOUNTS["punch-30"])} available`, className: "is-pending", detail: calculation.punch30TrackingDetail };
-
-    const safetyStatus = calculation.safetySwpppPass
-      ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["safety-swppp"])}`, className: "is-pass" }
-      : { label: `${formatCurrency(BONUS_COMPONENT_AMOUNTS["safety-swppp"])} available`, className: "is-pending" };
 
     const checklistStatus = calculation.superintendentChecklistPass
       ? { label: `Complete • +${formatCurrency(BONUS_COMPONENT_AMOUNTS["superintendent-checklist"])}`, className: "is-pass", detail: record.superintendentChecklistCompletedDate ? `Completed ${formatDate(record.superintendentChecklistCompletedDate)}.` : "Marked complete." }
@@ -1200,29 +1185,8 @@
         </div>
       </article>
 
-      <article class="eligibility-criterion ${safetyStatus.className}">
-        <div class="eligibility-icon" aria-hidden="true">${calculation.safetySwpppPass ? "✓" : "4"}</div>
-        <div class="eligibility-content">
-          <div class="eligibility-heading"><h3>Safety / SWPPP Inspections</h3><span class="eligibility-status">${escapeHtml(safetyStatus.label)}</span></div>
-          <label class="eligibility-check">
-            <input type="checkbox" data-field="safetySwpppComplete" ${record.safetySwpppComplete ? "checked" : ""}>
-            <span>Required safety and SWPPP inspections were completed</span>
-          </label>
-          <div class="eligibility-fields">
-            <label class="field">
-              <span class="field-label">Verified date</span>
-              <input type="date" data-field="safetySwpppCompletedDate" value="${escapeAttribute(record.safetySwpppCompletedDate || "")}">
-            </label>
-            <label class="field eligibility-note-field">
-              <span class="field-label">Notes / inspection reference</span>
-              <input type="text" data-field="safetySwpppNotes" value="${escapeAttribute(record.safetySwpppNotes || "")}" placeholder="Optional inspection note or reference">
-            </label>
-          </div>
-        </div>
-      </article>
-
       <article class="eligibility-criterion ${checklistStatus.className}">
-        <div class="eligibility-icon" aria-hidden="true">${calculation.superintendentChecklistPass ? "✓" : "5"}</div>
+        <div class="eligibility-icon" aria-hidden="true">${calculation.superintendentChecklistPass ? "✓" : "4"}</div>
         <div class="eligibility-content">
           <div class="eligibility-heading"><h3>End of Build Checklist</h3><span class="eligibility-status">${escapeHtml(checklistStatus.label)}</span></div>
           <p>The detailed checklist is completed separately. For bonus tracking, confirm only whether it was completed and the completion date.</p>
@@ -1326,12 +1290,12 @@
     refs.summaryRecordName.textContent = recordName;
     refs.summaryStatus.textContent = record.status || "Draft";
     refs.summaryStatus.className = `status-chip ${statusClass(record.status)}`;
-    refs.summaryScore.textContent = `${calculation.criteriaPassed}/5`;
+    refs.summaryScore.textContent = `${calculation.criteriaPassed}/4`;
     refs.scoreRing.style.setProperty("--score", String(clamp(calculation.weightedScore, 0, 100)));
     refs.summaryBonus.textContent = formatCurrency(calculation.finalBonus);
     refs.summaryMultiplier.textContent = calculation.hasManualBonus
       ? `Manual override; calculated amount ${formatCurrency(calculation.recommendedBonus)}`
-      : `${formatCurrency(calculation.recommendedBonus)} of ${formatCurrency(calculation.baseBonus)} earned • ${calculation.criteriaPassed}/5 requirements complete`;
+      : `${formatCurrency(calculation.recommendedBonus)} of ${formatCurrency(calculation.baseBonus)} earned • ${calculation.criteriaPassed}/4 requirements complete`;
     refs.summaryBaseBonus.textContent = formatCurrency(calculation.baseBonus);
     refs.summaryGrossBuild.textContent = calculation.grossBuildDays === null ? "—" : `${calculation.grossBuildDays} days${record.actualCloseDate ? "" : " to date"}`;
     refs.summaryDelayDays.textContent = `${calculation.approvedDelayDays} day${calculation.approvedDelayDays === 1 ? "" : "s"}`;
@@ -1431,7 +1395,6 @@
         punch30TrackingDetail = `Due in ${punch30DaysRemaining} days.`;
       }
     }
-    const safetySwpppPass = Boolean(record.safetySwpppComplete);
     const superintendentChecklistPass = Boolean(record.superintendentChecklistComplete);
 
     const resultById = {
@@ -1452,7 +1415,6 @@
           : "Not verified"
       },
       "punch-30": { pass: punch30Pass, touched: punch30Pass, evidence: punch30Pass ? `Completed${record.punch30CompletedDate ? ` ${formatDate(record.punch30CompletedDate)}` : ""}${record.punch30Notes ? `; ${record.punch30Notes}` : ""}` : "Not marked complete" },
-      "safety-swppp": { pass: safetySwpppPass, touched: safetySwpppPass, evidence: safetySwpppPass ? `Completed${record.safetySwpppCompletedDate ? ` ${formatDate(record.safetySwpppCompletedDate)}` : ""}${record.safetySwpppNotes ? `; ${record.safetySwpppNotes}` : ""}` : "Not marked complete" },
       "superintendent-checklist": { pass: superintendentChecklistPass, touched: superintendentChecklistPass || Boolean(record.superintendentChecklistCompletedDate), evidence: superintendentChecklistPass ? `Completed${record.superintendentChecklistCompletedDate ? ` ${formatDate(record.superintendentChecklistCompletedDate)}` : ""}` : "Not marked complete" }
     };
 
@@ -1465,8 +1427,7 @@
       weightedPoints += score * weight;
       totalWeight += weight;
       const notesByCriterion = {
-        "punch-30": record.punch30Notes,
-        "safety-swppp": record.safetySwpppNotes
+        "punch-30": record.punch30Notes
       };
       const note = notesByCriterion[criterion.id] || result.evidence;
       const availableAmount = BONUS_COMPONENT_AMOUNTS[criterion.id] || 0;
@@ -1486,8 +1447,8 @@
       };
     });
 
-    const criteriaPassed = [buildTimePass, finalGradePhotosPass, punch30Pass, safetySwpppPass, superintendentChecklistPass].filter(Boolean).length;
-    const allCriteriaPass = criteriaPassed === 5;
+    const criteriaPassed = [buildTimePass, finalGradePhotosPass, punch30Pass, superintendentChecklistPass].filter(Boolean).length;
+    const allCriteriaPass = criteriaPassed === 4;
     const weightedScore = totalWeight > 0 ? weightedPoints / totalWeight : 0;
     const baseBonus = BASE_BONUS_AMOUNT;
     const recommendedBonus = roundCurrency(criteriaDetails.reduce((sum, criterion) => sum + criterion.earnedAmount, 0));
@@ -1528,7 +1489,6 @@
       punch30TrackingStatus,
       punch30TrackingLabel,
       punch30TrackingDetail,
-      safetySwpppPass,
       superintendentChecklistPass,
       weightedScore: round(weightedScore, 2),
       payoutLabel,
@@ -1906,7 +1866,6 @@
       "Adjusted Build Days", "Build Time Limit", "Variance Days", "Requirements Complete",
       "Build Time Pass", "Final Grade Photos Verified", "Final Grade Verification Date", "Final Grade Notes",
       "30-Day Punch Due Date", "30-Day Punch Tracking Status", "30-Day Punch Complete", "30-Day Punch Completion Date", "30-Day Punch Notes",
-      "Safety / SWPPP Complete", "Safety / SWPPP Verification Date", "Safety / SWPPP Notes",
       "End of Build Checklist Complete", "End of Build Checklist Completion Date",
       "Base Bonus", "Payout Percent", "Calculated Bonus", "Final Bonus",
       "Reviewed By", "Approved By", "Paid Date"
@@ -1918,11 +1877,10 @@
         record.planName, record.jobNumber, record.buildStartDate, record.actualCloseDate,
         record.closingDate, calculation.grossBuildDays ?? "", calculation.approvedDelayDays,
         calculation.adjustedBuildDays ?? "", calculation.buildTimeLimitDays, calculation.varianceDays ?? "",
-        `${calculation.criteriaPassed}/5`, calculation.buildTimePass ? "Yes" : "No",
+        `${calculation.criteriaPassed}/4`, calculation.buildTimePass ? "Yes" : "No",
         calculation.finalGradePhotosPass ? "Yes" : "No", record.finalGradePhotosVerifiedDate, record.finalGradePhotosNotes,
         calculation.punch30DueDate, calculation.punch30TrackingLabel,
         calculation.punch30Pass ? "Yes" : "No", record.punch30CompletedDate, record.punch30Notes,
-        calculation.safetySwpppPass ? "Yes" : "No", record.safetySwpppCompletedDate, record.safetySwpppNotes,
         calculation.superintendentChecklistPass ? "Yes" : "No", record.superintendentChecklistCompletedDate,
         calculation.baseBonus, calculation.multiplier * 100,
         calculation.recommendedBonus, calculation.finalBonus, record.reviewedBy,
@@ -2036,7 +1994,7 @@
     <span class="status">${escapeHtml(record.status || "Draft")}</span>
   </div>
   <div class="summary">
-    <div><span>Requirements complete</span><strong>${calculation.criteriaPassed}/5</strong></div>
+    <div><span>Requirements complete</span><strong>${calculation.criteriaPassed}/4</strong></div>
     <div><span>Adjusted build</span><strong>${calculation.adjustedBuildDays === null ? "—" : `${calculation.adjustedBuildDays} days`}</strong></div>
     <div><span>Approved delays</span><strong>${calculation.approvedDelayDays} days</strong></div>
     <div class="bonus"><span>Recommended / approved bonus</span><strong>${escapeHtml(formatCurrency(calculation.finalBonus))}</strong></div>
@@ -2083,11 +2041,8 @@
       ${reportInfo("Verification notes", record.finalGradePhotosNotes)}
     </div>
   </section>
-  <section><h3>Safety / SWPPP and End of Build Checklist</h3>
+  <section><h3>End of Build Checklist</h3>
     <div class="info-grid">
-      ${reportInfo("Safety / SWPPP complete", calculation.safetySwpppPass ? "Yes" : "No")}
-      ${reportInfo("Safety / SWPPP date", formatDate(record.safetySwpppCompletedDate))}
-      ${reportInfo("Safety / SWPPP notes", record.safetySwpppNotes)}
       ${reportInfo("End of build checklist complete", calculation.superintendentChecklistPass ? "Yes" : "No")}
       ${reportInfo("Checklist completion date", formatDate(record.superintendentChecklistCompletedDate))}
     </div>
@@ -2180,7 +2135,7 @@
 - **Variance:** ${calculation.varianceDays === null ? "—" : `${calculation.varianceDays > 0 ? "+" : ""}${calculation.varianceDays} days`}
 
 ## Bonus recommendation
-- **Requirements complete:** ${calculation.criteriaPassed}/5
+- **Requirements complete:** ${calculation.criteriaPassed}/4
 - **Base bonus:** ${formatCurrency(calculation.baseBonus)}
 - **Payout tier:** ${escapeMarkdown(calculation.payoutLabel)} (${round(calculation.multiplier * 100, 0)}%)
 - **Calculated bonus:** ${formatCurrency(calculation.recommendedBonus)}
@@ -2199,11 +2154,6 @@ ${delays}
 - **Uploaded to Dropbox:** ${calculation.finalGradePhotosPass ? "Yes" : "No"}
 - **Verified date:** ${record.finalGradePhotosVerifiedDate || "—"}
 - **Notes / Dropbox reference:** ${escapeMarkdown(record.finalGradePhotosNotes || "—")}
-
-## Safety / SWPPP inspections
-- **Complete:** ${calculation.safetySwpppPass ? "Yes" : "No"}
-- **Verified date:** ${record.safetySwpppCompletedDate || "—"}
-- **Notes / inspection reference:** ${escapeMarkdown(record.safetySwpppNotes || "—")}
 
 ## End of Build Checklist
 - **Complete:** ${calculation.superintendentChecklistPass ? "Yes" : "No"}
