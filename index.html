@@ -8,7 +8,7 @@
   <title>Arive Homes | Superintendent Bonus Program</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=12">
+  <link rel="stylesheet" href="styles.css?v=14">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to content</a>
@@ -237,14 +237,7 @@
                   <option value="Townhome">Townhome</option>
                 </select>
               </label>
-              <label class="field field-span-2">
-                <span class="field-label">Property address <span aria-hidden="true">*</span></span>
-                <input type="text" data-field="address" required autocomplete="street-address" placeholder="Street address, city, state, ZIP">
-              </label>
-              <label class="field">
-                <span class="field-label">Permit / job number</span>
-                <input type="text" data-field="jobNumber" placeholder="Optional">
-              </label>
+              
               <label class="field">
                 <span class="field-label">Base bonus amount</span>
                 <span class="input-prefix-wrap">
@@ -412,42 +405,22 @@
             <div class="card-header">
               <div>
                 <p class="section-number">06</p>
-                <h2 id="approvalHeading">Review, approval, and payment</h2>
-                <p class="card-subtitle">Keep a simple audit trail for who reviewed, approved, and paid the bonus.</p>
+                <h2 id="approvalHeading">Approval</h2>
+                <p class="card-subtitle">Final signoff and optional manual bonus adjustment.</p>
               </div>
             </div>
-            <div class="form-grid form-grid-3">
-              <label class="field">
-                <span class="field-label">Reviewed by</span>
-                <input type="text" data-field="reviewedBy" placeholder="Name">
-              </label>
-              <label class="field">
-                <span class="field-label">Review date</span>
-                <input type="date" data-field="reviewDate">
-              </label>
-              <label class="field">
-                <span class="field-label">Submitted date</span>
-                <input type="date" data-field="submittedDate">
-              </label>
+            <div class="form-grid form-grid-2">
               <label class="field">
                 <span class="field-label">Approved by</span>
                 <input type="text" data-field="approvedBy" placeholder="Name">
               </label>
               <label class="field">
-                <span class="field-label">Approval date</span>
+                <span class="field-label">Date</span>
                 <input type="date" data-field="approvedDate">
               </label>
-              <label class="field">
-                <span class="field-label">Paid date</span>
-                <input type="date" data-field="paidDate">
-              </label>
-              <label class="field field-span-3">
-                <span class="field-label">Overall review notes</span>
-                <textarea data-field="reviewNotes" rows="4" placeholder="Wins, concerns, coaching notes, or context for the final decision."></textarea>
-              </label>
-              <label class="field field-span-3">
-                <span class="field-label">Approval notes</span>
-                <textarea data-field="approvalNotes" rows="3" placeholder="Final management decision or any adjustment to the calculated recommendation."></textarea>
+              <label class="field field-span-2">
+                <span class="field-label">Notes</span>
+                <textarea data-field="approvalNotes" rows="4" placeholder="Approval details or adjustments to the calculated recommendation."></textarea>
               </label>
               <label class="field">
                 <span class="field-label">Manual approved bonus</span>
@@ -735,6 +708,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <script src=app.js?v=27 defer></script>
+  <script src=app.js?v=28 defer></script>
 </body>
 </html>
