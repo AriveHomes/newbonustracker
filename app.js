@@ -118,6 +118,7 @@
   let remoteSyncTimer = null;
   let logoDataUrlCache = null;
   const refs = {};
+  const expandedTrackerQuarters = new Set();
 
   document.addEventListener("DOMContentLoaded", init);
 
@@ -735,7 +736,33 @@
       })
       .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
 
-    refs.recordsTableBody.innerHTML = filtered.map((record) => recordRowHtml(record)).join("");
+    const quarters = new Map();
+    filtered.forEach((record) => {
+      const date = parseIsoDate(record.closingDate);
+      const key = date ? `${date.getUTCFullYear()}-Q${Math.floor(date.getUTCMonth() / 3) + 1}` : "undated";
+      if (!quarters.has(key)) quarters.set(key, []);
+      quarters.get(key).push(record);
+    });
+    refs.recordsTableBody.innerHTML = [...quarters.keys()]
+      .sort((a, b) => a === "undated" ? 1 : b === "undated" ? -1 : b.localeCompare(a))
+      .map((key) => {
+        const records = quarters.get(key);
+        const expanded = expandedTrackerQuarters.has(key);
+        const label = key === "undated" ? "No closing date" : `${key.slice(5)} ${key.slice(0, 4)}`;
+        const monthRanges = ["Jan–Mar", "Apr–Jun", "Jul–Sep", "Oct–Dec"];
+        const range = key === "undated" ? "Awaiting closing date" : monthRanges[Number(key.slice(-1)) - 1];
+        const rows = records.map((record, index) => recordRowHtml(record)
+          .replace('<tr ', `<tr id="tracker-${key}-${index}" data-tracker-quarter="${key}"${expanded ? "" : " hidden"} `)).join("");
+        const controls = records.map((record, index) => `tracker-${key}-${index}`).join(" ");
+        return `<tr class="tracker-quarter-row"><th colspan="9" scope="rowgroup">
+          <button type="button" class="tracker-quarter-toggle" data-toggle-quarter="${key}" aria-expanded="${expanded}" aria-controls="${controls}">
+            <span class="tracker-quarter-chevron" aria-hidden="true">›</span>
+            <span class="tracker-quarter-label">${label}</span>
+            <span class="tracker-quarter-range">${range}</span>
+            <span class="tracker-quarter-count">${records.length} home${records.length === 1 ? "" : "s"}</span>
+          </button>
+        </th></tr>${rows}`;
+      }).join("");
 
     const noRecords = state.records.length === 0;
     const noMatches = !noRecords && filtered.length === 0;
@@ -793,6 +820,18 @@
   }
 
   function handleRecordTableClick(event) {
+    const quarterButton = event.target.closest("[data-toggle-quarter]");
+    if (quarterButton) {
+      const key = quarterButton.dataset.toggleQuarter;
+      const expanded = !expandedTrackerQuarters.has(key);
+      if (expanded) expandedTrackerQuarters.add(key);
+      else expandedTrackerQuarters.delete(key);
+      quarterButton.setAttribute("aria-expanded", String(expanded));
+      refs.recordsTableBody.querySelectorAll(`[data-tracker-quarter="${key}"]`).forEach((row) => {
+        row.hidden = !expanded;
+      });
+      return;
+    }
     const actionButton = event.target.closest("[data-record-action]");
     if (actionButton) {
       event.stopPropagation();
@@ -2906,3 +2945,4 @@ ${record.approvalNotes ? escapeMarkdown(record.approvalNotes) : "—"}`;
     }
   }
 })();
+

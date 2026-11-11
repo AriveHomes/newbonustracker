@@ -1,10 +1,10 @@
-const CACHE_NAME = "arive-bonus-v32";
+const CACHE_NAME = "arive-bonus-v33";
 const APP_ASSETS = [
   "./",
   "./index.html",
   "./monthly-summary.html",
-  "./styles.css?v=14",
-  "./app.js?v=28",
+  "./styles.css?v=15",
+  "./app.js?v=29",
   "./manifest.webmanifest",
   "./arive-logo-dark.webp",
   "./arive-logo-white.webp",
@@ -36,3 +36,4 @@ self.addEventListener("fetch", (event) => {
       .catch(() => caches.match(event.request).then((cached) => cached || caches.match("./index.html")))
   );
 });
+
